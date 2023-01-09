@@ -4,6 +4,13 @@ const bcrypt = require('bcrypt');
 
 
 const userSchema = mongoose.Schema({
+    pseudo: {
+        type: String,
+        required: true,
+        minLength: 3,
+        maxLength: 55,
+        trimp: true,
+    },
 
     fisrtName: {
         type: String,
@@ -70,6 +77,7 @@ const userSchema = mongoose.Schema({
 userSchema.pre('save', async function (next) {
     const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(this.password, salt);
+    this.confirmPassword = await bcrypt.hash(this.confirmPassword, salt);
     next();
 })
 
