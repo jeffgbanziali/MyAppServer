@@ -8,8 +8,8 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
         unique: true,
-        minLength: 3,
-        maxLength: 55,
+        minlength: 3,
+        maxlength: 55,
         trimp: true,
     },
 
@@ -40,7 +40,7 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
         max: 1024,
-        minLength: 8,
+        minlength: 8,
     },
     phoneNumber: {
         type: String
