@@ -12,10 +12,13 @@ module.exports.checkUser = (req, res, next) => {
             } else {
                 let user = await UserModel.findById(decodedToken.id);
                 res.locals.user = user;
+                console.log(user._id);
+                console.log("Token found");
                 next();
             }
         });
     } else {
+        console.log("5e")
         res.locals.user = null;
         next();
     }
@@ -27,13 +30,15 @@ module.exports.requireAuth = (req, res, next) => {
         jwt.verify(token, process.env.TOKEN_SECRET, async (err, decodedToken) => {
             if (err) {
                 console.log(err);
-                res.send(200).json('no token')
             } else {
+                // res.send(decodedToken.id);
                 console.log(decodedToken.id);
+
                 next();
             }
         });
     } else {
-        console.log('No token');
+        res.send("No token");
+        console.log("No Token found");
     }
 };

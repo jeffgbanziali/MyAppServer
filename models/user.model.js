@@ -11,6 +11,7 @@ const userSchema = mongoose.Schema({
         minlength: 3,
         maxlength: 55,
         trimp: true,
+       
     },
 
     fisrtName: {
