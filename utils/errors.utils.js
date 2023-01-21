@@ -34,19 +34,20 @@ module.exports.signInErrors = (err) => {
 
     if (err.message.includes('password'))
         errors.password = "Le mot de passe ne correspond pas"
+    console.log(err.message);
 
     return errors;
 };
 
 //update profile error
 module.exports.uploadErrors = (err) => {
-    let errors = { format: '', maxSize: ""};
-  
+    let errors = { format: '', maxSize: "" };
+
     if (err.message.includes('invalid file'))
-      errors.format = "Format incompatabile";
-  
+        errors.format = "Format incompatabile";
+
     if (err.message.includes('max size'))
-      errors.maxSize = "Le fichier dépasse 500ko";
-  
+        errors.maxSize = "Le fichier dépasse 500ko";
+
     return errors
-  }
+}
