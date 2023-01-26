@@ -59,25 +59,9 @@ module.exports.deleteUser = async (req, res) => {
     return res.status(500).json({ message: err });
   }
 };
-//get friends
-router.get("/friends/:userId", async (req, res) => {
-  try {
-    const user = await UserModel.findById(req.params.userId);
-    const friends = await Promise.all(
-      user.followings.map((friendId) => {
-        return UserModel.findById(friendId);
-      })
-    );
-    let friendList = [];
-    friends.map((friend) => {
-      const { _id, pseudo, profilePicture } = friend;
-      friendList.push({ _id, pseudo, profilePicture });
-    });
-    res.status(200).json(friendList)
-  } catch (err) {
-    res.status(500).json(err);
-  }
-});
+
+
+//follow
 module.exports.follow = async (req, res) => {
   if (!ObjectID.isValid(req.params.id) || !ObjectID.isValid(req.body.idToFollow)) {
     return res.status(400).send("ID unknown : " + req.params.id);
@@ -98,6 +82,8 @@ module.exports.follow = async (req, res) => {
   }
 };
 
+//unfollow
+
 module.exports.unfollow = async (req, res) => {
   if (!ObjectID.isValid(req.params.id) || !ObjectID.isValid(req.body.idToUnfollow)) {
     return res.status(400).send("ID unknown : " + req.params.id);
@@ -117,19 +103,3 @@ module.exports.unfollow = async (req, res) => {
     console.log(err);
   }
 }
-
-//  get user
-router.get("/", async (req, res) => {
-  const userId = req.query.userId;
-  const pseudo = req.query.pseudo;
-  try {
-    const user = userId
-      ? await UserModel.findById(userId)
-      : await UserModel.findOne({ pseudo: pseudo });
-    const { password, updatedAt, ...other } = user._doc;
-    res.status(200).json(other);
-  } catch (err) {
-    res.status(500).json(err);
-    console.log(err);
-  }
-});
