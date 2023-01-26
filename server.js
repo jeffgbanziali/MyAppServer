@@ -68,8 +68,8 @@ app.get('/jwtid', requireAuth, (req, res) => {
 //routes
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
-app.use("/api/conversation", conversationRoutes);
-app.use("/api/message", messageRoutes);
+app.use("/api/conversations", conversationRoutes);
+app.use("/api/messages", messageRoutes);
 
 
 //myAppServer

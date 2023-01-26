@@ -1,19 +1,38 @@
 const router = require('express').Router()
-const messageController = require('../controllers/message.controller');
-
-
+const Message = require('../models/Message')
 //New Message
 
 
-//router.post('/', messageController.getMessage);
+router.post('/', async (req, res) => {
+    const newMessage = new Message(req.body);
+
+    try {
+        const savedMessage = await newMessage.save();
+        res.status(200).json(savedMessage);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+}); 
 
 //Get Conversation of a user
 
-router.get('/:conversationId', messageController.getConversation);
-
-
-
-
-
+router.get('/:conversationId', async (req, res) => {
+    try {
+        const messages = await Message.find({
+            conversationId: req.params.conversationId,
+        });
+        res.status(200).json(messages);
+    } catch (err) {
+        res.status(500).json(err);
+    }
+});
 
 module.exports = router;
+
+
+
+
+
+
+
+
