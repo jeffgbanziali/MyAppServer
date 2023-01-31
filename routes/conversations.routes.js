@@ -1,34 +1,82 @@
-const router = require('express').Router()
-const Conversation = require('../models/Conversation')
+const express = require('express');
+const router = express.Router();
+const Conversation = require('../models/Conversation');
 
-//New Conversation
+// Récupérer toutes les conversations
+router.get('/', async (req, res) => {
+    try {
+        const conversations = await Conversation.find();
+        res.json(conversations);
+        console.log(conversations);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+        console.log(err);
+    }
+});
 
-router.post("/", async (req, res) => {
-    const newConversation = new Conversation({
-      members: [req.body.senderId, req.body.receiverId],
+// Obtenir une conversation spécifique
+router.get('/:id', getConversation, (req, res) => {
+    res.json(res.conversation);
+    cosnole.log(res.conversation);
+});
+
+// Créer une nouvelle conversation
+router.post('/', async (req, res) => {
+    const conversation = new Conversation({
+        members: req.body.members
     });
-  
     try {
-      const savedConversation = await newConversation.save();
-      res.status(200).json(savedConversation);
+        const newConversation = await conversation.save();
+        res.status(201).json(newConversation);
+        console.log(newConversation);
     } catch (err) {
-      res.status(500).json(err);
+        res.status(400).json({ message: err.message });
+        console.log(err);
     }
-  });
-  
-  //get conv of a user
-  
-  router.get("/:userId", async (req, res) => {
+});
+
+// Mettre à jour une conversation
+router.patch('/:id', getConversation, async (req, res) => {
+    if (req.body.members != null) {
+        res.conversation.members = req.body.members;
+    }
     try {
-      const conversation = await Conversation.find({
-        members: {  _id: req.params.id },
-      });
-      res.status(200).json(conversation);
+        const updatedConversation = await res.conversation.save();
+        res.json(updatedConversation);
+        console.log(updatedConversation);
     } catch (err) {
-      res.status(500).json(err);
+        res.status(400).json({ message: err.message });
+        console.log(err);
     }
-  });
-  
-  // get conv includes two userId
- 
-  module.exports = router;
+});
+
+// Supprimer une conversation
+router.delete('/:id', getConversation, async (req, res) => {
+    try {
+        await res.conversation.remove();
+        res.json({ message: 'Conversation supprimée' });
+        console.log('Conversation supprimée');
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+        console.log(err);
+    }
+});
+
+// Middleware pour récupérer une conversation spécifique
+async function getConversation(req, res, next) {
+    let conversation;
+    try {
+        conversation = await Conversation.findById(req.params.id);
+        if (conversation == null) {
+            return res.status(404).json({ message: 'Impossible de trouver la conversation' });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+        console.log(err);
+    }
+
+    res.conversation = conversation;
+    next();
+}
+
+module.exports = router;

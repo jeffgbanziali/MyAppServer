@@ -1,5 +1,6 @@
-const PostModel = require('../models/post.model');
+const PostModel = require("../models/post.model");
 const UserModel = require('../models/user.model');
+const MessageSchema = require('../models/Message');
 const ObjectID = require('mongoose').Types.ObjectId;
 const fs = require("fs");
 const { promisify } = require("util");
@@ -12,7 +13,7 @@ module.exports.readPost = (req, res) => {
         if (!err) res.send(docs);
         else console.log("Error to get data : " + err);
     }).sort({ createdAt: -1 });
-};
+}; 
 
 // create post model
 
@@ -38,7 +39,7 @@ module.exports.createPost = async (req, res) => {
         await pipeline(
             req.file.stream,
             fs.createWriteStream(
-                `${__dirname}/../client/public/uploads/posts/${fileName}`
+                `${__dirname}/../Client_MyFlajooApp/public/uploads/posts/${fileName}`
             )
         );
     }
@@ -222,3 +223,4 @@ module.exports.deleteCommentPost = (req, res) => {
         return res.status(400).send(err);
     }
 };
+

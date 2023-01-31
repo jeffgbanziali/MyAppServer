@@ -7,9 +7,9 @@ const { uploadErrors } = require("../utils/errors.utils");
 module.exports.uploadProfil = async (req, res) => {
     try {
         if (
-            req.file.detectedMimeType !== 'image/jpg' &&
-            req.file.detectedMimeType !== 'image/png' &&
-            req.file.detectedMimeType !== 'image/jpeg'
+            req.file.detectedMimeType != 'image/jpg' &&
+            req.file.detectedMimeType != 'image/png' &&
+            req.file.detectedMimeType != 'image/jpeg'
         )
             throw Error('invalid file');
 
@@ -19,11 +19,12 @@ module.exports.uploadProfil = async (req, res) => {
         return res.status(201).json({ errors });
     }
     const fileName = req.body.name + '.jpg';
+    console.log(fileName)
 
     await pipeline(
         req.file.stream,
         fs.createWriteStream(
-            `${__dirname}/../client/public/uploads/profil/${fileName}`
+            `${__dirname}/../Client_MyFlajooApp/public/uploads/profil/${fileName}`
         )
     );
 
@@ -33,11 +34,13 @@ module.exports.uploadProfil = async (req, res) => {
             { $set: { picture: "./uploads/profil/" + fileName } },
             { new: true, upsert: true, setDefaultsOnInsert: true })
             .then((data) => res.send(data))
+        console.log(data)
             .catch((err) => res.status(500).send({ message: err }));
 
 
     } catch (err) {
         return res.status(500).send({ message: err });
+        console.log(message);
     }
 
 };

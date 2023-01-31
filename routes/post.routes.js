@@ -17,6 +17,7 @@ router.patch('/edit-comment-post/:id', postController.editCommentPost);
 router.patch('/delete-comment-post/:id', postController.deleteCommentPost);
 
 
+
 //postController
 
 module.exports = router;
