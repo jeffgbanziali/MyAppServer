@@ -13,7 +13,7 @@ module.exports.readPost = (req, res) => {
         if (!err) res.send(docs);
         else console.log("Error to get data : " + err);
     }).sort({ createdAt: -1 });
-}; 
+};
 
 // create post model
 

@@ -24,7 +24,7 @@ module.exports.uploadProfil = async (req, res) => {
     await pipeline(
         req.file.stream,
         fs.createWriteStream(
-            `${__dirname}/../Client_MyFlajooApp/public/uploads/profil/${fileName}`
+            `${__dirname}/../Client_MyFlajooApp/public/uploads/posts/${fileName}`
         )
     );
 
