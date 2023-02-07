@@ -60,29 +60,37 @@ module.exports.deleteUser = async (req, res) => {
   }
 };
 
-
-//follow
 module.exports.follow = async (req, res) => {
   if (!ObjectID.isValid(req.params.id) || !ObjectID.isValid(req.body.idToFollow)) {
     return res.status(400).send("ID unknown : " + req.params.id);
   }
 
   try {
-    // add to the follower list
-    const user = await UserModel.findByIdAndUpdate(req.params.id, { $addToSet: { following: req.body.idToFollow } }, { new: true, upsert: true });
+    // Ajouter à la liste des followers
+    const follower = await UserModel.findByIdAndUpdate(
+      req.params.id,
+      { $addToSet: { following: req.body.idToFollow } },
+      { new: true, upsert: true }
+    );
+    if (!follower) {
+      return res.status(404).json({ message: "Follower not found." });
+    }
 
-    // add to following list
-    await UserModel.findByIdAndUpdate(req.body.idToFollow, { $addToSet: { followers: req.params.id } }, { new: true, upsert: true });
+    // Ajouter à la liste des followings
+    const following = await UserModel.findByIdAndUpdate(
+      req.body.idToFollow,
+      { $addToSet: { followers: req.params.id } },
+      { new: true, upsert: true }
+    );
+    if (!following) {
+      return res.status(404).json({ message: "Following not found." });
+    }
 
-    console.log(req.body.idToFollow);
-    res.send(user);
+    return res.status(200).json({ message: "Successfully followed." });
   } catch (err) {
     return res.status(500).json({ message: err });
-    console.log(err);
   }
 };
-
-//unfollow
 
 module.exports.unfollow = async (req, res) => {
   if (!ObjectID.isValid(req.params.id) || !ObjectID.isValid(req.body.idToUnfollow)) {
@@ -90,16 +98,28 @@ module.exports.unfollow = async (req, res) => {
   }
 
   try {
-    // remove from the follower list
-    const user = await UserModel.findByIdAndUpdate(req.params.id, { $pull: { following: req.body.idToUnfollow } }, { new: true });
+    // Retirer de la liste des followers
+    const follower = await UserModel.findByIdAndUpdate(
+      req.params.id,
+      { $pull: { following: req.body.idToUnfollow } },
+      { new: true, upsert: true }
+    );
+    if (!follower) {
+      return res.status(404).json({ message: "Follower not found." });
+    }
 
-    // remove from following list
-    await UserModel.findByIdAndUpdate(req.body.idToUnfollow, { $pull: { followers: req.params.id } }, { new: true });
+    // Retirer de la liste des followings
+    const following = await UserModel.findByIdAndUpdate(
+      req.body.idToUnfollow,
+      { $pull: { followers: req.params.id } },
+      { new: true, upsert: true }
+    );
+    if (!following) {
+      return res.status(404).json({ message: "Following not found." });
+    }
 
-    console.log(req.body.idToUnfollow);
-    res.send(user);
+    return res.status(200).json({ message: "Successfully unfollowed." });
   } catch (err) {
     return res.status(500).json({ message: err });
-    console.log(err);
   }
-}
+};
