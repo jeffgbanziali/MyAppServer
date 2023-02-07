@@ -154,7 +154,7 @@ module.exports.unlikePost = async (req, res) => {
 
 
 
-//write comment the post 
+//write comment the post
 module.exports.commentPost = (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send("ID unknown : " + req.params.id);
@@ -224,5 +224,3 @@ module.exports.deleteCommentPost = (req, res) => {
         return res.status(400).send(err);
     }
 };
-
-
