@@ -1,12 +1,11 @@
+const postModel = require("../models/post.model");
 const PostModel = require("../models/post.model");
-const UserModel = require('../models/user.model');
-const MessageSchema = require('../models/Message');
-const ObjectID = require('mongoose').Types.ObjectId;
+const UserModel = require("../models/user.model");
+const { uploadErrors } = require("../utils/errors.utils");
+const ObjectID = require("mongoose").Types.ObjectId;
 const fs = require("fs");
 const { promisify } = require("util");
 const pipeline = promisify(require("stream").pipeline);
-
-//read post model
 
 module.exports.readPost = (req, res) => {
     PostModel.find((err, docs) => {
@@ -14,8 +13,6 @@ module.exports.readPost = (req, res) => {
         else console.log("Error to get data : " + err);
     }).sort({ createdAt: -1 });
 };
-
-// create post model
 
 module.exports.createPost = async (req, res) => {
     let fileName;
@@ -39,10 +36,11 @@ module.exports.createPost = async (req, res) => {
         await pipeline(
             req.file.stream,
             fs.createWriteStream(
-                `${__dirname}/../Client_MyFlajooApp/public/uploads/posts/${fileName}`
+                `${__dirname}/../client/public/uploads/posts/${fileName}`
             )
         );
     }
+
     const newPost = new PostModel({
         posterId: req.body.posterId,
         message: req.body.message,
@@ -58,9 +56,7 @@ module.exports.createPost = async (req, res) => {
     } catch (err) {
         return res.status(400).send(err);
     }
-}
-
-// update post model
+};
 
 module.exports.updatePost = (req, res) => {
     if (!ObjectID.isValid(req.params.id))
@@ -81,13 +77,11 @@ module.exports.updatePost = (req, res) => {
     );
 };
 
-// delete post model
-
-module.exports.deletePost = async (req, res) => {
+module.exports.deletePost = (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send("ID unknown : " + req.params.id);
 
-    PostModel.findByIdAndDelete(req.params.id, (err, docs) => {
+    PostModel.findByIdAndRemove(req.params.id, (err, docs) => {
         if (!err) res.send(docs);
         else console.log("Delete error : " + err);
     });
