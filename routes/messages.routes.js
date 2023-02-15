@@ -1,29 +1,42 @@
 const router = require("express").Router();
-const Message = require("../models/Message");
+const MessageModel = require("../models/Message");
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
 
 //add
 
-router.post("/", async (req, res) => {
-    const newMessage = new Message(req.body);
+// create message
 
+router.post('/', async (req, res) => {
     try {
-        const savedMessage = await newMessage.save();
-        res.status(200).json(savedMessage);
-    } catch (err) {
-        res.status(500).json(err);
+        const newMessage = new MessageModel(req.body);
+        await newMessage.save();
+        res.send(newMessage);
+    } catch (error) {
+        res.status(400).send({ error: error.message });
     }
 });
 
-//get
 
-router.get("/:conversationId", async (req, res) => {
+//get message
+
+router.get('/:id', async (req, res) => {
     try {
-        const messages = await Message.find({
-            conversationId: req.params.conversationId,
+        const id = req.params.id;
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).send({ error: 'Invalid user ID' });
+        }
+
+        const messages = await MessageModel.find({
+            $or: [
+                { sender: id },
+                { receiver: id }
+            ]
         });
-        res.status(200).json(messages);
-    } catch (err) {
-        res.status(500).json(err);
+
+        res.send(messages);
+    } catch (error) {
+        res.status(400).send({ error: error.message });
     }
 });
 

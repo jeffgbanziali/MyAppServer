@@ -20,28 +20,7 @@ router.put("/:id", userController.updateUser);
 router.delete('/:id', userController.deleteUser);
 router.patch('/follow/:id', userController.follow);
 router.patch('/unfollow/:id', userController.unfollow);
-
-router.get("/", async (req, res) => {
-    const pseudo = req.query.pseudo;
-    try {
-        const user = await UserModel.findOne({ pseudo: pseudo });
-        if (!user) {
-            return res.status(404).json({ message: "Utilisateur non trouvé" });
-
-        }
-        const { password, updatedAt, ...other } = user._doc;
-        res.status(200).json(other);
-        console.log("Utilisateur non trouvé");
-    } catch (err) {
-        res.status(500).json({ message: "Une erreur interne s'est produite" });
-        console.log("Utilisateur non trouvé");
-    }
-});
-
-
-
-// get friends 
-router.get("/friends/:id", userController.getFriends);
+router.get('/friends/:id', userController.getFriends);
 
 
 // upload image routes

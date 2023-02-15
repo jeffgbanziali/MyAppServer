@@ -12,15 +12,20 @@ module.exports.getAllUsers = async (req, res) => {
 
 
 //user information
-module.exports.userInfo = (req, res) => {
-  if (!ObjectID.isValid(req.params.id))
+module.exports.userInfo = async (req, res) => {
+  if (!ObjectID.isValid(req.params.id)) {
     return res.status(400).send("ID unknown : " + req.params.id);
-  console.log(req.params.id);
-  UserModel.findById(req.params.id, (
-    err, docs) => {
-    if (!err) res.send(docs);
-    else console.log("ID unknown : " + err);
-  }).select("-password" + " -confirmPassword");
+  }
+
+  try {
+    const user = await UserModel.findById(req.params.id).select("-password -confirmPassword");
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    return res.status(500).json({ message: err });
+  }
 };
 
 
@@ -66,6 +71,9 @@ module.exports.deleteUser = async (req, res) => {
 
 module.exports.getFriends = async (req, res) => {
   try {
+    if (typeof req.params.id === 'undefined') {
+      return res.status(400).json({ error: 'Missing user id' });
+    }
     const user = await UserModel.findById(req.params.id)
     const friends = await Promise.all(
       user.following.map((friendId) => {
@@ -76,10 +84,12 @@ module.exports.getFriends = async (req, res) => {
     friends.map((friend) => {
       const { _id, pseudo, picture } = friend;
       friendList.push({ _id, pseudo, picture })
+      console.log(req.params.id)
     })
     res.status(200).json(friendList)
   } catch (error) {
     res.status(500).json(error)
+    console.log('error')
     console.log(error)
 
   }
