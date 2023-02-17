@@ -22,7 +22,6 @@ router.patch('/follow/:id', userController.follow);
 router.patch('/unfollow/:id', userController.unfollow);
 router.get('/friends/:id', userController.getFriends);
 
-
 // upload image routes
 router.post("/upload", upload.single("file"), uploadController.uploadProfil);
 
