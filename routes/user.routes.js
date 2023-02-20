@@ -3,7 +3,6 @@ const authController = require('../controllers/auth.controller');
 const userController = require('../controllers/user.controller');
 const uploadController = require('../controllers/upload.controller');
 const multer = require('multer');
-const UserModel = require('../models/user.model');
 const upload = multer();
 
 
