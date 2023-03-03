@@ -44,7 +44,7 @@ module.exports.createPost = async (req, res) => {
     const newPost = new PostModel({
         posterId: req.body.posterId,
         message: req.body.message,
-        picture: req.file !== null ? "./uploads/posts/" + fileName : "",
+        picture: req.file !== null ? "/uploads/posts/" + fileName : "",
         video: req.body.video,
         likers: [],
         comments: [],
@@ -108,9 +108,9 @@ module.exports.likePost = async (req, res) => {
                     },
                     { new: true })
                     .then((data) => res.send(data))
-                    .catch((err) => res.status(500).send({ message: err }));
+                    .catch((err) => res.status(501).send({ message: err }));
             })
-            .catch((err) => res.status(500).send({ message: err }));
+            .catch((err) => res.status(502).send({ message: err }));
     } catch (err) {
         return res.status(400).send(err);
     }

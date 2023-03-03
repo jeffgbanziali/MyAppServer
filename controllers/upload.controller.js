@@ -28,7 +28,7 @@ module.exports.uploadProfil = async (req, res) => {
             `${__dirname}/../client/public/uploads/profil/${fileName}`
         )
     );
-
+    
     try {
         await UserModel.findByIdAndUpdate(
             req.body.userId,
