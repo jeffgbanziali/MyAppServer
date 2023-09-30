@@ -1,11 +1,12 @@
-const postModel = require("../models/post.model");
-const PostModel = require("../models/post.model");
-const UserModel = require("../models/user.model");
-const { uploadErrors } = require("../utils/errors.utils");
-const ObjectID = require("mongoose").Types.ObjectId;
-const fs = require("fs");
-const { promisify } = require("util");
-const pipeline = promisify(require("stream").pipeline);
+const PostModel = require('../models/post.model');
+const UserModel = require('../models/user.model');
+const { uploadErrors } = require('../utils/errors.utils');
+const ObjectID = require('mongoose').Types.ObjectId;
+const sizeOf = require('image-size');
+
+
+const MAX_FILE_SIZE = 500000;
+const ALLOWED_IMAGE_TYPES = ["image/jpg", "image/png", "image/jpeg"];
 
 module.exports.readPost = (req, res) => {
     PostModel.find((err, docs) => {
@@ -14,49 +15,55 @@ module.exports.readPost = (req, res) => {
     }).sort({ createdAt: -1 });
 };
 
+
+
 module.exports.createPost = async (req, res) => {
-    let fileName;
-
-    if (req.file !== null) {
-        try {
-            if (
-                req.file.detectedMimeType != "image/jpg" &&
-                req.file.detectedMimeType != "image/png" &&
-                req.file.detectedMimeType != "image/jpeg"
-            )
-                throw Error("invalid file");
-
-            if (req.file.size > 500000) throw Error("max size");
-        } catch (err) {
-            const errors = uploadErrors(err);
-            return res.status(201).json({ errors });
-        }
-        fileName = req.body.posterId + Date.now() + ".jpg";
-
-        await pipeline(
-            req.file.stream,
-            fs.createWriteStream(
-                `${__dirname}/../client/public/uploads/posts/${fileName}`
-            )
-        );
-    }
-
-    const newPost = new PostModel({
-        posterId: req.body.posterId,
-        message: req.body.message,
-        picture: req.file !== null ? "/uploads/posts/" + fileName : "",
-        video: req.body.video,
-        likers: [],
-        comments: [],
-    });
-
     try {
-        const post = await newPost.save();
-        return res.status(201).json(post);
+        let imageUrl = null;  // Initialise imageUrl à null
+
+        // Vérifie si l'URL de l'image a été envoyée depuis le client
+        if (req.body.imageFileName) {
+            imageUrl = req.body.imageFileName;
+        }
+
+        // Création d'une nouvelle instance du modèle de poste
+        const newPost = new PostModel({
+            posterId: req.body.posterId,
+            message: req.body.message,
+            picture: imageUrl,  // Utilise l'URL de l'image
+            likers: [],
+            comments: [],
+        });
+
+        // Sauvegarde du nouveau poste dans la base de données MongoDB
+        const savedPost = await newPost.save();
+        console.log('Post saved to MongoDB:', savedPost);
+
+        // Renvoie les informations nécessaires au front-end
+        res.status(201).json({
+            _id: savedPost._id,
+            posterId: savedPost.posterId,
+            message: savedPost.message,
+            imageFileName: savedPost.imageFileName,
+            likers: savedPost.likers,
+            comments: savedPost.comments,
+            createdAt: savedPost.createdAt,
+            updatedAt: savedPost.updatedAt,
+        });
     } catch (err) {
-        return res.status(400).send(err);
+        console.error('Error during post creation:', err);
+        let errorMessage = 'An error occurred during post creation.';
+        if (err.message) errorMessage = err.message;
+
+        const errors = uploadErrors(errorMessage);
+        res.status(500).json({ errors });
     }
 };
+
+
+
+
+
 
 module.exports.updatePost = (req, res) => {
     if (!ObjectID.isValid(req.params.id))

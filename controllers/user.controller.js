@@ -162,3 +162,19 @@ module.exports.unfollow = async (req, res) => {
     return res.status(500).json({ message: err });
   }
 };
+
+
+// Fonction de recherche d'utilisateurs
+
+exports.searchUsers = async (req, res) => {
+  try {
+    // Recherchez tous les utilisateurs dans votre base de données
+    const searchResults = await UserModel.find();
+
+    res.json(searchResults);
+  } catch (error) {
+    console.error('Erreur de recherche d\'utilisateurs :', error);
+    res.status(500).json({ error: 'Erreur de recherche d\'utilisateurs' });
+  }
+};
+

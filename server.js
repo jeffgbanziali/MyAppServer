@@ -15,7 +15,7 @@ const { Server } = require('socket.io');
 const app = express();
 
 const corsOptions = {
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3001",
     credentials: true,
     'allowedHeaders': ['sessionId', 'Content-Type'],
     'exposedHeaders': ['sessionId'],
