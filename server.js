@@ -15,14 +15,13 @@ const { Server } = require('socket.io');
 const app = express();
 
 const corsOptions = {
-    origin: "http://localhost:3001",
+    origin: "http://localhost:3000", // L'URL de votre application React
     credentials: true,
-    'allowedHeaders': ['sessionId', 'Content-Type'],
-    'exposedHeaders': ['sessionId'],
-    'methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    'preflightContinue': false
-
-}
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders: ['sessionId', 'Content-Type'],
+    exposedHeaders: ['sessionId'],
+    preflightContinue: false,
+};
 
 //socket.io
 const server = http.createServer(app);
@@ -53,6 +52,8 @@ io.on('connection', (socket) => {
 
 //middleware
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
