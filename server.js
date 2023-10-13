@@ -10,7 +10,6 @@ const messageRoutes = require("./routes/message.route");
 const { checkUser, requireAuth } = require("./middleware/auth.middleware");
 const cors = require("cors");
 const http = require("http");
-const { Server } = require("socket.io");
 
 const app = express();
 
@@ -24,31 +23,62 @@ const corsOptions = {
 };
 
 //socket.io
+const io = require("socket.io")(8900, {
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
 
-  const server = http.createServer(app);
+let users = [];
 
-const io = new Server(server, {
-    cors: {
-      origin: "http://localhost:3000", // L'URL de votre application React
-      methods: ["GET", "POST"]
+const addUser = (id, socketId) => {
+  !users.some((user) => user.id === id) &&
+    users.push({ id, socketId });
+};
+
+const removeUser = (socketId) => {
+  users = users.filter((user) => user.socketId !== socketId);
+};
+
+const getUser = (id) => {
+  return users.find((user) => user.id=== id);
+};
+
+io.on("connection", (socket) => {
+  //when ceonnect
+  console.log("Utilisateur connecté !!!!");
+
+  //take userId and socketId from user
+  socket.on("addUser", (id) => {
+    addUser(id, socket.id);
+    io.emit("getUsers", users);
+  });
+  
+  //send and get message
+  socket.on("sendMessage", ({ senderId, receiverId, text }) => {
+    const user = getUser(receiverId);
+  
+    if (user && user.socketId) {
+      console.log("Envoi du message à :", receiverId);
+      io.to(user.socketId).emit("getMessage", {
+        senderId,
+        text,
+      });
+    } else {
+      console.log("Utilisateur non trouvé ou socketId non défini.");
+      // Vous pouvez ajouter ici une logique pour gérer le cas où l'utilisateur n'est pas trouvé.
     }
   });
   
-  io.on('connection', (socket) => {
-    console.log('Utilisateur connecté');
   
-    // Gérer les événements de chat ici
-    socket.on('chat message', (msg) => {
-      io.emit('chat message', msg); // Diffuse le message à tous les utilisateurs connectés
-    });
-  
-    // Ajoute d'autres événements de chat selon tes besoins
-  
-    socket.on('disconnect', () => {
-      console.log('Utilisateur déconnecté');
-    });
-  });
 
+  //when disconnect
+  socket.on("disconnect", () => {
+    console.log("Utilisateur déconnecté !!!!");
+    removeUser(socket.id);
+    io.emit("getUsers", users);
+  });
+});
 
 //middleware
 app.use(cors(corsOptions));
@@ -72,6 +102,8 @@ app.use("/api/conversation", conversationRoutes);
 app.use("/api/message", messageRoutes);
 
 //myAppServer
+
+const server = http.createServer(app);
 server.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
