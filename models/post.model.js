@@ -19,7 +19,7 @@ const PostSchema = new mongoose.Schema(
         },
         likers: {
             type: [String],
-            default: [], // Tu peux utiliser default pour initialiser à une liste vide si besoin
+            default: [], 
         },
         comments: {
             type: [
@@ -30,7 +30,7 @@ const PostSchema = new mongoose.Schema(
                     timestamp: Number,
                 }
             ],
-            default: [], // Tu peux utiliser default pour initialiser à une liste vide si besoin
+            default: [],
         },
     },
     {
@@ -38,4 +38,4 @@ const PostSchema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model('Post', PostSchema); // J'ai changé 'post' en 'Post' pour respecter les conventions de nommage
+module.exports = mongoose.model('Post', PostSchema);

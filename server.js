@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const userRoutes = require("./routes/user.routes");
 const postRoutes = require("./routes/post.routes");
+const storyRoutes = require("./routes/story.route");
 const conversationRoutes = require("./routes/conversation.route");
 const messageRoutes = require("./routes/message.route");
 const { checkUser, requireAuth } = require("./middleware/auth.middleware");
@@ -46,7 +47,7 @@ const getUser = (id) => {
 
 io.on("connection", (socket) => {
   //when ceonnect
-  console.log("Utilisateur connecté !!!!");
+  console.log("Utilisateur  connecté !!!!");
 
   //take userId and socketId from user
   socket.on("addUser", (id) => {
@@ -98,6 +99,7 @@ app.get("/jwtid", requireAuth, (req, res) => {
 
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
+app.use("/api/stories", storyRoutes);
 app.use("/api/conversation", conversationRoutes);
 app.use("/api/message", messageRoutes);
 
