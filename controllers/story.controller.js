@@ -113,6 +113,62 @@ module.exports.dislikeStory = async (req, res) => {
     }
 };
 
+// ...
+
+module.exports.commentStory = async (req, res) => {
+    const { storyId, commenterId, commenterPseudo, text } = req.body;
+
+    try {
+        const story = await StoryModel.findById(storyId);
+
+        if (!story) {
+            return res.status(404).json({ message: "Story not found" });
+        }
+
+        const comment = {
+            commenterId,
+            commenterPseudo,
+            text,
+            timestamp: Date.now(),
+        };
+
+        story.comments.push(comment);
+
+        const updatedStory = await story.save();
+
+        res.json(updatedStory);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports.viewStory = async (req, res) => {
+    const { storyId, viewerId } = req.body;
+
+    try {
+        const story = await StoryModel.findById(storyId);
+
+        if (!story) {
+            return res.status(404).json({ message: "Story not found" });
+        }
+
+        const view = {
+            viewerId,
+            viewed_at: Date.now(),
+        };
+
+        story.views.push(view);
+
+        const updatedStory = await story.save();
+
+        res.json(updatedStory);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// ...
+
 
 module.exports.deleteStory = async (req, res) => {
     if (!ObjectID.isValid(req.params.storyId))
