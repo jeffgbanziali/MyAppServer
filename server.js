@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const userRoutes = require("./routes/user.routes");
 const postRoutes = require("./routes/post.routes");
 const storyRoutes = require("./routes/story.route");
+const videoRéelsRoutes = require("./routes/réels.route");
 const conversationRoutes = require("./routes/conversation.route");
 const messageRoutes = require("./routes/message.route");
 const { checkUser, requireAuth } = require("./middleware/auth.middleware");
@@ -102,6 +103,7 @@ app.use("/api/post", postRoutes);
 app.use("/api/stories", storyRoutes);
 app.use("/api/conversation", conversationRoutes);
 app.use("/api/message", messageRoutes);
+app.use("/api/videoReels", videoRéelsRoutes);
 
 //myAppServer
 

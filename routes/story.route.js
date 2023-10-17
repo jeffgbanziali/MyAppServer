@@ -9,18 +9,18 @@ router.get('/', storyController.readStories);
 router.post('/', storyController.createStory);
 
 // Aimer une histoire
-router.post('/:id/like-story', storyController.likeStory);
+router.patch('/like-story/:id', storyController.likeStory);
 
 // Ne pas aimer une histoire
-router.post('/:id/dislike-story', storyController.dislikeStory);
+router.patch('/dislike-story/:id', storyController.dislikeStory);
 
 // Commenter une histoire
-router.post('/comment-story', storyController.commentStory);
+router.post('/comment-story/:id', storyController.commentStory);
 
 // Voir une histoire
 router.post('/view-story', storyController.viewStory);
 
 // Supprimer une histoire
-router.delete('/:storyId', storyController.deleteStory);
+router.delete('/:id', storyController.deleteStory);
 
 module.exports = router;
