@@ -16,7 +16,7 @@ const http = require("http");
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:3000", // L'URL de votre application React
+  origin: "http://localhost:3000",
   credentials: true,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   allowedHeaders: ["sessionId", "Content-Type"],
@@ -43,7 +43,7 @@ const removeUser = (socketId) => {
 };
 
 const getUser = (id) => {
-  return users.find((user) => user.id=== id);
+  return users.find((user) => user.id === id);
 };
 
 io.on("connection", (socket) => {
@@ -55,11 +55,11 @@ io.on("connection", (socket) => {
     addUser(id, socket.id);
     io.emit("getUsers", users);
   });
-  
+
   //send and get message
   socket.on("sendMessage", ({ senderId, receiverId, text }) => {
     const user = getUser(receiverId);
-  
+
     if (user && user.socketId) {
       console.log("Envoi du message à :", receiverId);
       io.to(user.socketId).emit("getMessage", {
@@ -68,11 +68,11 @@ io.on("connection", (socket) => {
       });
     } else {
       console.log("Utilisateur non trouvé ou socketId non défini.");
-      // Vous pouvez ajouter ici une logique pour gérer le cas où l'utilisateur n'est pas trouvé.
+
     }
   });
-  
-  
+
+
 
   //when disconnect
   socket.on("disconnect", () => {

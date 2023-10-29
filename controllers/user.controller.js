@@ -2,14 +2,13 @@ const UserModel = require("../models/user.model");
 const ObjectID = require("mongoose").Types.ObjectId;
 const router = require("express").Router();
 
-
 //user model
 module.exports.getAllUsers = async (req, res) => {
-  const users = await UserModel.find().select("-password" + " -confirmPassword");
+  const users = await UserModel.find().select(
+    "-password" + " -confirmPassword"
+  );
   res.status(200).json(users);
 };
-
-
 
 //user information
 module.exports.userInfo = async (req, res) => {
@@ -18,7 +17,9 @@ module.exports.userInfo = async (req, res) => {
   }
 
   try {
-    const user = await UserModel.findById(req.params.id).select("-password -confirmPassword");
+    const user = await UserModel.findById(req.params.id).select(
+      "-password" + " -confirmPassword"
+    );
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
@@ -27,8 +28,6 @@ module.exports.userInfo = async (req, res) => {
     return res.status(500).json({ message: err });
   }
 };
-
-
 
 //user update
 module.exports.updateUser = async (req, res) => {
@@ -43,7 +42,7 @@ module.exports.updateUser = async (req, res) => {
           bio: req.body.bio,
         },
       },
-      { new: true, upsert: true, setDefaultsOnInsert: true },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
     );
     return res.status(200).send(user);
   } catch (err) {
@@ -60,46 +59,44 @@ module.exports.deleteUser = async (req, res) => {
   try {
     await UserModel.remove({ _id: req.params.id }).exec();
     res.status(200).json({ message: "Successfully deleted." });
-  }
-  catch (err) {
+  } catch (err) {
     return res.status(500).json({ message: err });
   }
 };
-
 
 // get friends
 
 module.exports.getFriends = async (req, res) => {
   try {
-    if (typeof req.params.id === 'undefined') {
-      return res.status(400).json({ error: 'Missing user id' });
+    if (typeof req.params.id === "undefined") {
+      return res.status(400).json({ error: "Missing user id" });
     }
-    const user = await UserModel.findById(req.params.id)
+    const user = await UserModel.findById(req.params.id);
     const friends = await Promise.all(
       user.following.map((friendId) => {
-        return UserModel.findById(friendId)
+        return UserModel.findById(friendId);
       })
-    )
+    );
     let friendList = [];
     friends.map((friend) => {
       const { _id, pseudo, picture } = friend;
-      friendList.push({ _id, pseudo, picture })
-      console.log(req.params.id)
-    })
-    res.status(200).json(friendList)
+      friendList.push({ _id, pseudo, picture });
+      console.log(req.params.id);
+    });
+    res.status(200).json(friendList);
   } catch (error) {
-    res.status(500).json(error)
-    console.log('error')
-    console.log(error)
-
+    res.status(500).json(error);
+    console.log("error");
+    console.log(error);
   }
-}
-
-
+};
 
 // GET /users/:id/following
 module.exports.follow = async (req, res) => {
-  if (!ObjectID.isValid(req.params.id) || !ObjectID.isValid(req.body.idToFollow)) {
+  if (
+    !ObjectID.isValid(req.params.id) ||
+    !ObjectID.isValid(req.body.idToFollow)
+  ) {
     return res.status(400).send("ID unknown : " + req.params.id);
   }
 
@@ -132,7 +129,10 @@ module.exports.follow = async (req, res) => {
 
 // GET /users/:id/unfollow
 module.exports.unfollow = async (req, res) => {
-  if (!ObjectID.isValid(req.params.id) || !ObjectID.isValid(req.body.idToUnfollow)) {
+  if (
+    !ObjectID.isValid(req.params.id) ||
+    !ObjectID.isValid(req.body.idToUnfollow)
+  ) {
     return res.status(400).send("ID unknown : " + req.params.id);
   }
 
@@ -163,7 +163,6 @@ module.exports.unfollow = async (req, res) => {
   }
 };
 
-
 // Fonction de recherche d'utilisateurs
 
 exports.searchUsers = async (req, res) => {
@@ -173,8 +172,7 @@ exports.searchUsers = async (req, res) => {
 
     res.json(searchResults);
   } catch (error) {
-    console.error('Erreur de recherche d\'utilisateurs :', error);
-    res.status(500).json({ error: 'Erreur de recherche d\'utilisateurs' });
+    console.error("Erreur de recherche d'utilisateurs :", error);
+    res.status(500).json({ error: "Erreur de recherche d'utilisateurs" });
   }
 };
-

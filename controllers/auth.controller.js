@@ -11,10 +11,10 @@ const createToken = (id) => {
 };
 
 module.exports.signUp = async (req, res) => {
-    const { pseudo, fisrtName, lastName, email, password, confirmPassword, phoneNumber } = req.body
+    const { pseudo, firstName, lastName, email, password, confirmPassword, phoneNumber } = req.body
 
     try {
-        const user = await UserModel.create({ pseudo, fisrtName, lastName, email, password, confirmPassword, phoneNumber });
+        const user = await UserModel.create({ pseudo, firstName, lastName, email, password, confirmPassword, phoneNumber });
         res.status(201).json({ user: user._id });
         console.log(JSON.stringify(user));
     }

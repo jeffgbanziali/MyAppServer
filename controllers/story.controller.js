@@ -1,68 +1,88 @@
 const StoryModel = require('../models/story.model');
 const UserModel = require('../models/user.model');
 const ObjectID = require('mongoose').Types.ObjectId;
+const { uploadErrors } = require('../utils/errors.utils');
 
 module.exports.readStories = (req, res) => {
-    StoryModel.find((err, docs) => {
-        if (!err) res.send(docs);
-        else console.log("Error to get data : " + err);
+    StoryModel.find({}, 'container', (err, containers) => {
+        if (!err) {
+            res.send(containers);
+        } else {
+            console.log("Erreur lors de la récupération des données : " + err);
+            res.status(500).send("Erreur serveur");
+        }
     }).sort({ createdAt: -1 });
 };
 
 module.exports.createStory = async (req, res) => {
     try {
         let mediaUrl = null;
+        let mediaType = null;
 
-        if (req.body.mediaFileName) {
-            mediaUrl = req.body.mediaFileName;
+        if (req.body.media) {
+            mediaUrl = req.body.media.url;
+            mediaType = req.body.media.type;
         }
 
-        const newStory = new StoryModel({
-            posterId: req.body.posterId,
-            content: req.body.content,
-            media: mediaUrl,
-            music: req.body.music,
-            expires_at: req.body.expires_at,
-            allowedViewers: req.body.allowedViewers,
-            likers: [],
-            comments: [],
-        });
+        // Vérifie si le conteneur existe pour l'utilisateur
+        let existingContainer = await StoryModel.findOne({ 'container.posterId': req.body.posterId });
 
-        const savedStory = await newStory.save();
-        console.log('Story saved to MongoDB:', savedStory);
+        // Si le conteneur n'existe pas, crée un nouveau conteneur avec cette histoire
+        if (!existingContainer) {
+            existingContainer = new StoryModel({
+                container: {
+                    posterId: req.body.posterId,
+                    stories: [
+                        {
+                            text: req.body.text,
+                            expires_at: req.body.expires_at,
+                            media: mediaUrl,
+                            media_type: mediaType
+                        },
+                    ],
+                },
+            });
 
-        res.status(201).json({
-            _id: savedStory._id,
-            posterId: savedStory.posterId,
-            content: savedStory.content,
-            mediaFileName: savedStory.mediaFileName,
-            music: savedStory.music,
-            expires_at: savedStory.expires_at,
-            allowedViewers: savedStory.allowedViewers,
-            likers: savedStory.likers,
-            comments: savedStory.comments,
-            createdAt: savedStory.createdAt,
-            updatedAt: savedStory.updatedAt,
-        });
+            await existingContainer.save();
+            console.log({ message: 'Story created successfully!', story: existingContainer.container.stories[0] });
+        } else {
+            // Si le conteneur existe, ajoute cette histoire au tableau 'stories'
+            const newStory = {
+                text: req.body.text,
+                expires_at: req.body.expires_at,
+                media: mediaUrl,
+                media_type: mediaType,
+            };
+
+            existingContainer.container.stories.push(newStory);
+
+            // Enregistre le conteneur mis à jour dans la base de données
+            await existingContainer.save();
+            console.log({ message: 'Story added to container successfully!', story: newStory });
+        }
+
+        res.status(201).json({ message: 'Story added to container successfully' });
     } catch (err) {
         console.error('Error during story creation:', err);
         let errorMessage = 'An error occurred during story creation.';
         if (err.message) errorMessage = err.message;
 
-        res.status(500).json({ errors: { message: errorMessage } });
+        const errors = uploadErrors(errorMessage);
+        res.status(500).json({ errors });
     }
 };
 
-// Like story
+
+
 module.exports.likeStory = async (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send("ID unknown : " + req.params.id);
 
     try {
-        await StoryModel.findByIdAndUpdate(
-            req.params.id,
+        await StoryModel.findOneAndUpdate(
+            { 'container.stories._id': req.params.id },
             {
-                $addToSet: { likers: req.body.id },
+                $addToSet: { 'container.stories.$.likers': req.body.id },
             },
             { new: true }
         )
@@ -83,16 +103,15 @@ module.exports.likeStory = async (req, res) => {
     }
 };
 
-// Dislike story
-module.exports.dislikeStory = async (req, res) => {
+module.exports.unlikeStory = async (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send("ID unknown : " + req.params.id);
 
     try {
-        let storyUpdate = await StoryModel.findByIdAndUpdate(
-            req.params.id,
+        let storyUpdate = await StoryModel.findOneAndUpdate(
+            { 'container.stories._id': req.params.id },
             {
-                $pull: { likers: req.body.id },
+                $pull: { 'container.stories.$.likers': req.body.id },
             },
             { new: true }
         );
@@ -113,92 +132,87 @@ module.exports.dislikeStory = async (req, res) => {
     }
 };
 
-// ...
+module.exports.deleteStory = (req, res) => {
+
+    if (!ObjectID.isValid(req.params.id))
+        return res.status(400).send("ID unknown : " + req.params.id);
+
+    StoryModel.findByIdAndRemove(req.params.id, (err, docs) => {
+        if (!err) res.send(docs);
+        else console.log("Delete error : " + err);
+    });
+};
 
 module.exports.commentStory = async (req, res) => {
-    const { storyId, commenterId, commenterPseudo, text } = req.body;
+    if (!ObjectID.isValid(req.params.id))
+        return res.status(400).send("ID unknown : " + req.params.id);
 
     try {
-        const story = await StoryModel.findById(storyId);
+        const updatedStory = await StoryModel.findOneAndUpdate(
+            { 'container.stories._id': req.params.id },
+            {
+                $push: {
+                    'container.stories.$.comments': {
+                        commenterId: req.body.commenterId,
+                        commenterPseudo: req.body.commenterPseudo,
+                        text: req.body.text,
+                        timestamp: new Date().getTime(),
+                    },
+                },
+            },
+            { new: true }
+        );
 
-        if (!story) {
-            return res.status(404).json({ message: "Story not found" });
-        }
+        const lastComment = updatedStory.container.stories[0].comments[updatedStory.container.stories[0].comments.length - 1];
+        const commentId = lastComment._id;
 
-        const comment = {
-            commenterId,
-            commenterPseudo,
-            text,
-            timestamp: Date.now(),
-        };
-
-        story.comments.push(comment);
-
-        const updatedStory = await story.save();
-
-        res.json(updatedStory);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-module.exports.viewStory = async (req, res) => {
-    const { storyId, viewerId } = req.body;
-
-    try {
-        const story = await StoryModel.findById(storyId);
-
-        if (!story) {
-            return res.status(404).json({ message: "Story not found" });
-        }
-
-        const view = {
-            viewerId,
-            viewed_at: Date.now(),
-        };
-
-        story.views.push(view);
-
-        const updatedStory = await story.save();
-
-        res.json(updatedStory);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-// ...
-
-
-module.exports.deleteStory = async (req, res) => {
-    if (!ObjectID.isValid(req.params.storyId))
-        return res.status(400).send("ID unknown : " + req.params.storyId);
-
-    try {
-        const deletedStory = await StoryModel.findByIdAndRemove(req.params.storyId);
-        if (!deletedStory) return res.status(404).send({ message: "Story not found" });
-
-        // Retire la référence de la story supprimée des likes des utilisateurs
-        await UserModel.updateMany({ likes: req.params.storyId }, { $pull: { likes: req.params.storyId } });
-
-        res.send(deletedStory);
+        res.send({ commentId });
     } catch (err) {
         return res.status(500).send({ message: err });
     }
 };
 
-const cleanExpiredStories = async () => {
-    const now = new Date();
+
+module.exports.viewStory = async (req, res) => {
+    if (!ObjectID.isValid(req.params.id))
+        return res.status(400).send("ID unknown : " + req.params.id);
+
     try {
-        await StoryModel.deleteMany({ expires_at: { $lt: now } });
-        console.log('Expired stories cleaned up');
+        const story = await StoryModel.findOne({ 'container.stories._id': req.params.id });
+
+        if (!story) return res.status(404).send({ message: "Story not found" });
+
+        const viewerId = req.body.viewerId;
+
+        if (!story.container.stories[0].views.find((view) => view.viewerId === viewerId)) {
+            story.container.stories[0].views.push({
+                viewerId: viewerId,
+                viewed_at: Date.now(),
+            });
+
+            await story.save();
+        }
+
+        res.send(story);
+    } catch (err) {
+        return res.status(400).send(err);
+    }
+};
+
+// Suppression des histoires après 24 heures
+setInterval(async () => {
+    const currentTime = Date.now();
+    try {
+        const storiesToDelete = await StoryModel.find({
+            'container.stories.expires_at': { $lt: currentTime },
+        });
+
+        for (const story of storiesToDelete) {
+            await StoryModel.findByIdAndRemove(story._id);
+        }
+
+        console.log(`${storiesToDelete.length} expired stories cleaned up`);
     } catch (error) {
         console.error('Error cleaning up expired stories:', error);
     }
-
-    // Exécute la fonction de nettoyage toutes les 24 heures (86400000 millisecondes)
-
-};
-setInterval(cleanExpiredStories, 86400000);
-
-
+}, 86400000); // Exécute la vérification toutes les 24 heures (24 * 60 * 60 * 1000 milliseconds)

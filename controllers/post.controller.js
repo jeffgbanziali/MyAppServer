@@ -156,12 +156,12 @@ module.exports.unlikePost = async (req, res) => {
 
 
 //write comment the post
-module.exports.commentPost = (req, res) => {
+module.exports.commentPost = async (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send("ID unknown : " + req.params.id);
 
     try {
-        return PostModel.findByIdAndUpdate(
+        const updatedPost = await PostModel.findByIdAndUpdate(
             req.params.id,
             {
                 $push: {
@@ -173,13 +173,18 @@ module.exports.commentPost = (req, res) => {
                     },
                 },
             },
-            { new: true })
-            .then((data) => res.send(data))
-            .catch((err) => res.status(500).send({ message: err }));
+            { new: true }
+        );
+
+        const lastComment = updatedPost.comments[updatedPost.comments.length - 1];
+        const commentId = lastComment._id;
+
+        res.send({ commentId });
     } catch (err) {
-        return res.status(400).send(err);
+        return res.status(500).send({ message: err });
     }
 };
+
 
 module.exports.editCommentPost = (req, res) => {
     if (!ObjectID.isValid(req.params.id))

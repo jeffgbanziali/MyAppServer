@@ -9,16 +9,16 @@ router.get("/", videoRéelsController.readVideoRéels);
 router.post("/", videoRéelsController.createVideoRéels);
 
 // Aimer une vidéo réelle
-router.patch("/like-videoRéels/:id", videoRéelsController.likeVideoRéels);
+router.patch("/like-videoReels/:id", videoRéelsController.likeVideoRéels);
 
 // Ne pas aimer une vidéo réelle
-router.patch("/dislike-videoRéels/:id", videoRéelsController.dislikeVideoRéels);
+router.patch("/dislike-videoReels/:id", videoRéelsController.dislikeVideoRéels);
 
 // Commenter une vidéo réelle
-router.post("/comment-videoRéels/:id", videoRéelsController.commentVideoRéels);
+router.patch("/comment-videoReels/:id", videoRéelsController.commentVideoRéels);
 
 // Voir une vidéo réelle
-router.post("/view-videoRéels", videoRéelsController.viewVideoRéels);
+router.post("/view-videoReels", videoRéelsController.viewVideoRéels);
 
 // Supprimer une vidéo réelle
 router.delete("/:id", videoRéelsController.deleteVideoRéels);

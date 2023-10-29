@@ -12,13 +12,14 @@ router.post('/', storyController.createStory);
 router.patch('/like-story/:id', storyController.likeStory);
 
 // Ne pas aimer une histoire
-router.patch('/dislike-story/:id', storyController.dislikeStory);
+router.patch('/dislike-story/:id', storyController.unlikeStory);
 
 // Commenter une histoire
-router.post('/comment-story/:id', storyController.commentStory);
+router.patch('/comment-story/:id', storyController.commentStory);
 
 // Voir une histoire
-router.post('/view-story', storyController.viewStory);
+router.patch('/view-story/:id', storyController.viewStory);
+
 
 // Supprimer une histoire
 router.delete('/:id', storyController.deleteStory);
