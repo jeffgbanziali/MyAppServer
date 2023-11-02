@@ -16,6 +16,20 @@ module.exports.readPost = (req, res) => {
 };
 
 
+module.exports.getPostsByUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        const userPosts = await PostModel.find({ posterId: userId }).sort({ createdAt: -1 });
+
+        res.status(200).json(userPosts);
+    } catch (err) {
+        console.error('Error while getting user posts:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+
 
 module.exports.createPost = async (req, res) => {
     try {

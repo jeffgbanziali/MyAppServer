@@ -1,5 +1,6 @@
 const VideoRéelsModel = require("../models/réels.model");
 const UserModel = require("../models/user.model");
+const { uploadErrors } = require("../utils/errors.utils");
 const ObjectID = require("mongoose").Types.ObjectId;
 
 module.exports.readVideoRéels = (req, res) => {
@@ -9,13 +10,36 @@ module.exports.readVideoRéels = (req, res) => {
   }).sort({ createdAt: -1 });
 };
 
+
+module.exports.readVideoRéelsById = async (req, res) => {
+  try {
+      const userId = req.params.id;
+
+      const userPosts = await VideoRéelsModel.find({ posterId: userId }).sort({ createdAt: -1 });
+
+      res.status(200).json(userPosts);
+  } catch (err) {
+      console.error('Error while getting user posts:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+
 module.exports.createVideoRéels = async (req, res) => {
   try {
+    let mediaUrl = null;
+
+    // Vérifie si le chemin de la vidéo a été envoyé depuis le client
+    if (req.body.videoPath) {
+      mediaUrl = req.body.videoPath;
+    }
+
+    // Création d'une nouvelle instance du modèle de videoRéels
     const newVideoRéels = new VideoRéelsModel({
       posterId: req.body.posterId,
-      description: req.body.description,
-      videoPath: req.body.videoPath,
-      music: req.body.music,
+      music: req.body.music || "Default Music", // Valeur par défaut pour le champ music
+      description: req.body.description || "Default Description", // Valeur par défaut pour le champ description
+      videoPath: mediaUrl || "Default Video Path", // Valeur par défaut pour le champ videoPath
       likers: [],
       comments: [],
       views: [],
@@ -23,16 +47,30 @@ module.exports.createVideoRéels = async (req, res) => {
     });
 
     const savedVideoRéels = await newVideoRéels.save();
+    console.log('VideoRéels saved to MongoDB:', savedVideoRéels);
+    res.status(201).json({
+      _id: savedVideoRéels._id,
+      posterId: savedVideoRéels.posterId,
+      music: savedVideoRéels.music,
+      description: savedVideoRéels.description,
+      videoPath: savedVideoRéels.videoPath,
+      likers: savedVideoRéels.likers,
+      comments: savedVideoRéels.comments,
+      views: savedVideoRéels.views,
+      viewers: savedVideoRéels.viewers,
+      createdAt: savedVideoRéels.createdAt,
+      updatedAt: savedVideoRéels.updatedAt,
+    });
+  } catch (err) {
+    console.error('Error during VideoRéels creation:', err);
+    let errorMessage = 'An error occurred during VideoRéels creation.';
+    if (err.message) errorMessage = err.message;
 
-    res.status(201).json(savedVideoRéels);
-  } catch (error) {
-    console.error("Error during VideoRéels creation:", error);
-    let errorMessage = "An error occurred during VideoRéels creation.";
-    if (error.message) errorMessage = error.message;
-
-    res.status(500).json({ errors: { message: errorMessage } });
+    const errors = uploadErrors(errorMessage);
+    res.status(500).json({ errors });
   }
 };
+
 
 module.exports.likeVideoRéels = async (req, res) => {
   if (!ObjectID.isValid(req.params.id))

@@ -71,18 +71,41 @@ module.exports.getFriends = async (req, res) => {
     if (typeof req.params.id === "undefined") {
       return res.status(400).json({ error: "Missing user id" });
     }
+
     const user = await UserModel.findById(req.params.id);
-    const friends = await Promise.all(
-      user.following.map((friendId) => {
-        return UserModel.findById(friendId);
+    const friendList = [];
+
+    // Récupère tous les utilisateurs sauf l'utilisateur actuel
+    const allUsersExceptCurrentUser = await UserModel.find({
+      _id: { $ne: new ObjectID(req.params.id) },
+    });
+
+    // Ajoute tous les utilisateurs (excepté l'utilisateur actuel) à la liste d'amis
+    friendList.push(
+      ...allUsersExceptCurrentUser.map((friend) => ({
+        _id: friend._id,
+        pseudo: friend.pseudo,
+        picture: friend.picture,
+      }))
+    );
+
+    // Utilise Promise.all pour attendre toutes les promesses
+    await Promise.all(
+      user.following.map(async (friendId) => {
+        try {
+          // Utilise new ObjectID pour créer un objet ID à partir de la chaîne
+          const friend = await UserModel.findById(new ObjectID(friendId));
+
+          if (friend) {
+            const { _id, pseudo, picture } = friend;
+            friendList.push({ _id, pseudo, picture });
+          }
+        } catch (error) {
+          console.error("Erreur lors de la récupération de l'ami :", error);
+        }
       })
     );
-    let friendList = [];
-    friends.map((friend) => {
-      const { _id, pseudo, picture } = friend;
-      friendList.push({ _id, pseudo, picture });
-      console.log(req.params.id);
-    });
+
     res.status(200).json(friendList);
   } catch (error) {
     res.status(500).json(error);
@@ -90,6 +113,8 @@ module.exports.getFriends = async (req, res) => {
     console.log(error);
   }
 };
+
+
 
 // GET /users/:id/following
 module.exports.follow = async (req, res) => {

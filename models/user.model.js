@@ -11,7 +11,7 @@ const userSchema = mongoose.Schema({
         minlength: 3,
         maxlength: 55,
         trimp: true,
-       
+
     },
 
     fisrtName: {
@@ -22,7 +22,6 @@ const userSchema = mongoose.Schema({
         type: String,
 
     },
-
     email: {
         type: String,
         required: true,

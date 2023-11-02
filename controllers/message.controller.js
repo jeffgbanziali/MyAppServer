@@ -1,3 +1,4 @@
+const conversationModel = require("../models/conversation.model");
 const MessageModel = require("../models/message.model");
 
 module.exports.sendMessage = async (req, res) => {
@@ -13,11 +14,14 @@ module.exports.sendMessage = async (req, res) => {
 
 module.exports.readMessage = async (req, res) => {
   try {
-    const message = await MessageModel.find({
+    const messages = await MessageModel.find({
       conversationId: req.params.conversationId,
-    });
-    res.status(200).json(message);
+    }).sort({ createdAt: 1 });
+
+    res.status(200).json(messages);
   } catch (err) {
     res.status(500).json(err);
   }
 };
+
+

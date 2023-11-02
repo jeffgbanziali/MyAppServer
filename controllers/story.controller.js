@@ -3,16 +3,29 @@ const UserModel = require('../models/user.model');
 const ObjectID = require('mongoose').Types.ObjectId;
 const { uploadErrors } = require('../utils/errors.utils');
 
-module.exports.readStories = (req, res) => {
-    StoryModel.find({}, 'container', (err, containers) => {
-        if (!err) {
-            res.send(containers);
-        } else {
-            console.log("Erreur lors de la récupération des données : " + err);
-            res.status(500).send("Erreur serveur");
-        }
-    }).sort({ createdAt: -1 });
+module.exports.readStories = async (req, res) => {
+    try {
+        const stories = await StoryModel.find({}).sort({ createdAt: -1 });
+        res.send(stories);
+    } catch (err) {
+        console.error("Error during story retrieval:", err);
+        res.status(500).send("Server error");
+    }
 };
+
+module.exports.readStoriesById = async (req, res) => {
+    try {
+        const userId = req.params.id;
+  
+        const userPosts = await StoryModel.find({ posterId: userId }).sort({ createdAt: -1 });
+  
+        res.status(200).json(userPosts);
+    } catch (err) {
+        console.error('Error while getting user posts:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+  };
+
 
 module.exports.createStory = async (req, res) => {
     try {
@@ -73,60 +86,73 @@ module.exports.createStory = async (req, res) => {
 };
 
 
-
 module.exports.likeStory = async (req, res) => {
+
+    console.log('unlikeStory called');
+    console.log('req.params.id:', req.params.id);
+    console.log('req.body.id:', req.body.id);
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send("ID unknown : " + req.params.id);
 
     try {
-        await StoryModel.findOneAndUpdate(
-            { 'container.stories._id': req.params.id },
+        const storyUpdate = await StoryModel.findOneAndUpdate(
             {
-                $addToSet: { 'container.stories.$.likers': req.body.id },
+                'container.stories._id': req.params.id
+            },
+
+            {
+                $addToSet: { 'container.stories.$[story].likers': req.body.id },
+            },
+            { new: true, arrayFilters: [{ 'story._id': req.params.id }] }
+        );
+
+        const userUpdate = await UserModel.findByIdAndUpdate(
+            req.body.id,
+            {
+                $addToSet: { likes: req.params.id },
             },
             { new: true }
-        )
-            .then((data) => {
-                UserModel.findByIdAndUpdate(
-                    req.body.id,
-                    {
-                        $addToSet: { likes: req.params.id },
-                    },
-                    { new: true }
-                )
-                    .then((data) => res.send(data))
-                    .catch((err) => res.status(501).send({ message: err }));
-            })
-            .catch((err) => res.status(502).send({ message: err }));
+        );
+
+        res.send({ storyUpdate, userUpdate });
     } catch (err) {
         return res.status(400).send(err);
     }
 };
 
+
 module.exports.unlikeStory = async (req, res) => {
+
+    console.log('unlikeStory called');
+    console.log('req.params.id:', req.params.id);
+    console.log('req.body.id:', req.body.id);
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send("ID unknown : " + req.params.id);
 
     try {
-        let storyUpdate = await StoryModel.findOneAndUpdate(
-            { 'container.stories._id': req.params.id },
+        const storyUpdate = await StoryModel.findOneAndUpdate(
             {
-                $pull: { 'container.stories.$.likers': req.body.id },
+                'container.stories._id': req.params.id
             },
-            { new: true }
+            {
+                $pull: { 'container.stories.$[story].likers': req.body.id },
+            },
+            { new: true, arrayFilters: [{ 'story._id': req.params.id }] }
         );
+
         if (!storyUpdate) return res.status(404).send({ message: "Story not found" });
 
-        let userUpdate = await UserModel.findByIdAndUpdate(
+        const userUpdate = await UserModel.findByIdAndUpdate(
             req.body.id,
             {
                 $pull: { likes: req.params.id },
             },
             { new: true }
         );
+
         if (!userUpdate) return res.status(404).send({ message: "User not found" });
 
-        res.send(storyUpdate);
+        res.send({ storyUpdate, userUpdate });
     } catch (err) {
         return res.status(400).send(err);
     }

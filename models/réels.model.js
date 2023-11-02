@@ -70,6 +70,5 @@ const videoRéelsSchema = new mongoose.Schema({
   },
 });
 
-const VideoRéelsModel = mongoose.model("VideoRéels", videoRéelsSchema);
 
-module.exports = VideoRéelsModel;
+module.exports = mongoose.model("VideoRéels", videoRéelsSchema);

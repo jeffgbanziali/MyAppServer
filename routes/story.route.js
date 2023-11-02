@@ -4,6 +4,7 @@ const storyController = require('../controllers/story.controller');
 
 // Lire toutes les histoires
 router.get('/', storyController.readStories);
+router.get('/:id', storyController.readStoriesById);
 
 // Créer une nouvelle histoire
 router.post('/', storyController.createStory);
@@ -13,6 +14,7 @@ router.patch('/like-story/:id', storyController.likeStory);
 
 // Ne pas aimer une histoire
 router.patch('/dislike-story/:id', storyController.unlikeStory);
+
 
 // Commenter une histoire
 router.patch('/comment-story/:id', storyController.commentStory);

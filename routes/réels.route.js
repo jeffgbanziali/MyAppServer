@@ -4,6 +4,7 @@ const videoRéelsController = require("../controllers/réels.controller");
 
 // Lire toutes les vidéos réelles
 router.get("/", videoRéelsController.readVideoRéels);
+router.get("/:id", videoRéelsController.readVideoRéelsById);
 
 // Créer une nouvelle vidéo réelle
 router.post("/", videoRéelsController.createVideoRéels);
