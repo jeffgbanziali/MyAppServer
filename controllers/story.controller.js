@@ -16,15 +16,15 @@ module.exports.readStories = async (req, res) => {
 module.exports.readStoriesById = async (req, res) => {
     try {
         const userId = req.params.id;
-  
+
         const userPosts = await StoryModel.find({ posterId: userId }).sort({ createdAt: -1 });
-  
+
         res.status(200).json(userPosts);
     } catch (err) {
         console.error('Error while getting user posts:', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-  };
+};
 
 
 module.exports.createStory = async (req, res) => {
@@ -40,33 +40,34 @@ module.exports.createStory = async (req, res) => {
         // Vérifie si le conteneur existe pour l'utilisateur
         let existingContainer = await StoryModel.findOne({ 'container.posterId': req.body.posterId });
 
+        // Crée un nouvel objet story en fonction de la présence de text, de média et de type de média
+        const newStory = {
+            text: req.body.text,
+            expires_at: req.body.expires_at,
+        };
+
+        // Ajoute media et media_type s'ils sont présents
+        if (mediaUrl) {
+            newStory.media = mediaUrl;
+        }
+
+        if (mediaType) {
+            newStory.media_type = mediaType;
+        }
+
         // Si le conteneur n'existe pas, crée un nouveau conteneur avec cette histoire
         if (!existingContainer) {
             existingContainer = new StoryModel({
                 container: {
                     posterId: req.body.posterId,
-                    stories: [
-                        {
-                            text: req.body.text,
-                            expires_at: req.body.expires_at,
-                            media: mediaUrl,
-                            media_type: mediaType
-                        },
-                    ],
+                    stories: [newStory],
                 },
             });
 
             await existingContainer.save();
-            console.log({ message: 'Story created successfully!', story: existingContainer.container.stories[0] });
+            console.log({ message: 'Story created successfully!', story: newStory });
         } else {
             // Si le conteneur existe, ajoute cette histoire au tableau 'stories'
-            const newStory = {
-                text: req.body.text,
-                expires_at: req.body.expires_at,
-                media: mediaUrl,
-                media_type: mediaType,
-            };
-
             existingContainer.container.stories.push(newStory);
 
             // Enregistre le conteneur mis à jour dans la base de données
