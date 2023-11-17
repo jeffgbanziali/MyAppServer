@@ -37,14 +37,20 @@ let users = [];
 const addUser = (id, socketId) => {
   !users.some((user) => user.id === id) &&
     users.push({ id, socketId });
+  console.log("Users after adding:", users);
 };
 
 const removeUser = (socketId) => {
   users = users.filter((user) => user.socketId !== socketId);
+  console.log("Users after removing:", users);
 };
 
 const getUser = (id) => {
-  return users.find((user) => user.id === id);
+  console.log("Affiche toi :", id);
+  const user = users.find((user) => user.id === id);
+  console.log("User trouvé :", user);
+  console.log("Users :", users);
+  return user;
 };
 
 io.on("connection", (socket) => {
@@ -53,25 +59,28 @@ io.on("connection", (socket) => {
 
   //take userId and socketId from user
   socket.on("addUser", (id) => {
+    console.log("User added:", id, socket.id);
     addUser(id, socket.id);
     io.emit("getUsers", users);
   });
 
   //send and get message
   socket.on("sendMessage", ({ senderId, receiverId, text }) => {
+    console.log("Affiche toi :", receiverId);
     const user = getUser(receiverId);
 
+    console.log("User:", user);
     if (user && user.socketId) {
-      console.log("Envoi du message à :", receiverId);
       io.to(user.socketId).emit("getMessage", {
         senderId,
         text,
       });
+      console.log("Envoi du message à :", receiverId);
     } else {
       console.log("Utilisateur non trouvé ou socketId non défini.");
-
     }
   });
+
 
 
 
@@ -80,6 +89,7 @@ io.on("connection", (socket) => {
     console.log("Utilisateur déconnecté !!!!");
     removeUser(socket.id);
     io.emit("getUsers", users);
+    console.log("Users after disconnect:", users);
   });
 });
 

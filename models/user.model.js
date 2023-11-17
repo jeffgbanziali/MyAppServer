@@ -48,7 +48,7 @@ const userSchema = mongoose.Schema({
     picture: {
 
         type: String,
-        default: "./uploads/profil/"
+        default: null,
     },
     bio: {
         type: String,

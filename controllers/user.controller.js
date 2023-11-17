@@ -1,4 +1,5 @@
 const UserModel = require("../models/user.model");
+const { uploadErrors } = require("../utils/errors.utils");
 const ObjectID = require("mongoose").Types.ObjectId;
 const router = require("express").Router();
 
@@ -26,6 +27,31 @@ module.exports.userInfo = async (req, res) => {
     res.status(200).json(user);
   } catch (err) {
     return res.status(500).json({ message: err });
+  }
+};
+
+module.exports.updateProfile = async (req, res) => {
+  try {
+    let imageUrl = null;
+    if (req.body.picture) {
+      imageUrl = req.body.picture;
+    }
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { _id: req.params.id },
+      { $set: { picture: imageUrl } },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    );
+    res.status(200).json({
+      _id: updatedUser._id,
+      picture: updatedUser.picture,
+    });
+  } catch (err) {
+    console.error('Error during profile update:', err);
+    let errorMessage = 'An error occurred during profile update.';
+    if (err.message) errorMessage = err.message;
+
+    const errors = uploadErrors(errorMessage);
+    res.status(500).json({ errors });
   }
 };
 
@@ -75,12 +101,10 @@ module.exports.getFriends = async (req, res) => {
     const user = await UserModel.findById(req.params.id);
     const friendList = [];
 
-    // Récupère tous les utilisateurs sauf l'utilisateur actuel
     const allUsersExceptCurrentUser = await UserModel.find({
       _id: { $ne: new ObjectID(req.params.id) },
     });
 
-    // Ajoute tous les utilisateurs (excepté l'utilisateur actuel) à la liste d'amis
     friendList.push(
       ...allUsersExceptCurrentUser.map((friend) => ({
         _id: friend._id,
@@ -89,11 +113,11 @@ module.exports.getFriends = async (req, res) => {
       }))
     );
 
-    // Utilise Promise.all pour attendre toutes les promesses
+
     await Promise.all(
       user.following.map(async (friendId) => {
         try {
-          // Utilise new ObjectID pour créer un objet ID à partir de la chaîne
+       
           const friend = await UserModel.findById(new ObjectID(friendId));
 
           if (friend) {
@@ -126,7 +150,6 @@ module.exports.follow = async (req, res) => {
   }
 
   try {
-    // Ajouter à la liste des followers
     const follower = await UserModel.findByIdAndUpdate(
       req.params.id,
       { $addToSet: { following: req.body.idToFollow } },
@@ -136,7 +159,6 @@ module.exports.follow = async (req, res) => {
       return res.status(404).json({ message: "Follower not found." });
     }
 
-    // Ajouter à la liste des followings
     const following = await UserModel.findByIdAndUpdate(
       req.body.idToFollow,
       { $addToSet: { followers: req.params.id } },
@@ -162,7 +184,6 @@ module.exports.unfollow = async (req, res) => {
   }
 
   try {
-    // Retirer de la liste des followers
     const follower = await UserModel.findByIdAndUpdate(
       req.params.id,
       { $pull: { following: req.body.idToUnfollow } },
@@ -172,7 +193,6 @@ module.exports.unfollow = async (req, res) => {
       return res.status(404).json({ message: "Follower not found." });
     }
 
-    // Retirer de la liste des followings
     const following = await UserModel.findByIdAndUpdate(
       req.body.idToUnfollow,
       { $pull: { followers: req.params.id } },
@@ -192,7 +212,6 @@ module.exports.unfollow = async (req, res) => {
 
 exports.searchUsers = async (req, res) => {
   try {
-    // Recherchez tous les utilisateurs dans votre base de données
     const searchResults = await UserModel.find();
 
     res.json(searchResults);
