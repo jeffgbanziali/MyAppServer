@@ -14,9 +14,7 @@ module.exports.readVideoRéels = (req, res) => {
 module.exports.readVideoRéelsById = async (req, res) => {
   try {
     const userId = req.params.id;
-
     const userPosts = await VideoRéelsModel.find({ posterId: userId }).sort({ createdAt: -1 });
-
     res.status(200).json(userPosts);
   } catch (err) {
     console.error('Error while getting user posts:', err);
@@ -38,7 +36,7 @@ module.exports.createVideoRéels = async (req, res) => {
     const newVideoRéels = new VideoRéelsModel({
       posterId: req.body.posterId,
       music: req.body.music || "Default Music", // Valeur par défaut pour le champ music
-      description: req.body.description ,
+      description: req.body.description,
       videoPath: mediaUrl || "Default Video Path", // Valeur par défaut pour le champ videoPath
       likers: [],
       comments: [],

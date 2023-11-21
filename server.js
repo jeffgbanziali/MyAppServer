@@ -65,7 +65,7 @@ io.on("connection", (socket) => {
   });
 
   //send and get message
-  socket.on("sendMessage", ({ senderId, receiverId, text }) => {
+  socket.on("sendMessage", ({ senderId, receiverId, text, attachment }) => {
     console.log("Affiche toi :", receiverId);
     const user = getUser(receiverId);
 
@@ -74,8 +74,8 @@ io.on("connection", (socket) => {
       io.to(user.socketId).emit("getMessage", {
         senderId,
         text,
+        attachment,
       });
-      console.log("Envoi du message à :", receiverId);
     } else {
       console.log("Utilisateur non trouvé ou socketId non défini.");
     }
