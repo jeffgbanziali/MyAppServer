@@ -56,7 +56,9 @@ module.exports.updateProfile = async (req, res) => {
 };
 
 //user update
-module.exports.updateUser = async (req, res) => {
+module.exports.updateBio = async (req, res) => {
+  console.log('Requête de mise à jour de la biographie :', req.body);
+
   if (!ObjectID.isValid(req.params.id))
     return res.status(400).send("ID unknown : " + req.params.id);
 
@@ -70,11 +72,14 @@ module.exports.updateUser = async (req, res) => {
       },
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
+    console.log('Mise à jour de la biographie réussie. Nouvel utilisateur :', user);
     return res.status(200).send(user);
   } catch (err) {
+    console.error('Erreur lors de la mise à jour de la biographie :', err);
     return res.status(500).json({ message: err });
   }
 };
+
 
 // user delete
 
@@ -117,7 +122,7 @@ module.exports.getFriends = async (req, res) => {
     await Promise.all(
       user.following.map(async (friendId) => {
         try {
-       
+
           const friend = await UserModel.findById(new ObjectID(friendId));
 
           if (friend) {
@@ -139,8 +144,6 @@ module.exports.getFriends = async (req, res) => {
 };
 
 
-
-// GET /users/:id/following
 module.exports.follow = async (req, res) => {
   if (
     !ObjectID.isValid(req.params.id) ||
@@ -174,7 +177,7 @@ module.exports.follow = async (req, res) => {
   }
 };
 
-// GET /users/:id/unfollow
+
 module.exports.unfollow = async (req, res) => {
   if (
     !ObjectID.isValid(req.params.id) ||
@@ -208,15 +211,3 @@ module.exports.unfollow = async (req, res) => {
   }
 };
 
-// Fonction de recherche d'utilisateurs
-
-exports.searchUsers = async (req, res) => {
-  try {
-    const searchResults = await UserModel.find();
-
-    res.json(searchResults);
-  } catch (error) {
-    console.error("Erreur de recherche d'utilisateurs :", error);
-    res.status(500).json({ error: "Erreur de recherche d'utilisateurs" });
-  }
-};

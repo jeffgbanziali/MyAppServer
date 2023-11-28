@@ -159,16 +159,31 @@ module.exports.unlikeStory = async (req, res) => {
     }
 };
 
-module.exports.deleteStory = (req, res) => {
+module.exports.deleteStory = async (req, res) => {
+    try {
+        const container = await StoryModel.findOneAndUpdate(
+            { "container.stories._id": req.params.id },
+            {
+                $pull: {
+                    "container.stories": { _id: req.params.id }
+                }
+            },
+            { new: true }
+        );
 
-    if (!ObjectID.isValid(req.params.id))
-        return res.status(400).send("ID unknown : " + req.params.id);
-
-    StoryModel.findByIdAndRemove(req.params.id, (err, docs) => {
-        if (!err) res.send(docs);
-        else console.log("Delete error : " + err);
-    });
+        if (container) {
+            res.status(200).json({ message: "Story deleted successfully" });
+            console.log("Deleted successfully:", req.params.id);
+        } else {
+            console.log("Delete error: Container not found");
+            res.status(404).json({ message: "Container not found" });
+        }
+    } catch (err) {
+        console.log("Delete error:", err);
+        res.status(500).json(err);
+    }
 };
+
 
 module.exports.commentStory = async (req, res) => {
     if (!ObjectID.isValid(req.params.id))
@@ -242,4 +257,4 @@ setInterval(async () => {
     } catch (error) {
         console.error('Error cleaning up expired stories:', error);
     }
-}, 86400000); // Exécute la vérification toutes les 24 heures (24 * 60 * 60 * 1000 milliseconds)
+}, 86400000);
