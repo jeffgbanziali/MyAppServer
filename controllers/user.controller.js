@@ -72,13 +72,35 @@ module.exports.updateBio = async (req, res) => {
       },
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
-    console.log('Mise à jour de la biographie réussie. Nouvel utilisateur :', user);
+    console.log('Mise à jour de la biographie réussie. Nouveau biographie :', user.bio);
     return res.status(200).send(user);
   } catch (err) {
     console.error('Erreur lors de la mise à jour de la biographie :', err);
     return res.status(500).json({ message: err });
   }
 };
+
+
+module.exports.updatePseudo = async (req, res) => {
+  console.log('Requête de mise à jour du pseudo :', req.body);
+  if (!ObjectID.isValid(req.params.id))
+    return res.status(400).send("Id unknow : " + req.params.id);
+  try {
+    const user = await UserModel.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        $set: { pseudo: req.body.pseudo },
+      },
+      { new: true, upsert: true, setDefaultsOnInsert: true }
+    );
+    console.log('Mise à jour du pseudo réussie. Nouveau pseudo :', user.pseudo);
+    return res.status(200).send(user);
+  } catch (err) {
+    console.error('Erreur lors de la mise à jour du pseudo :', err);
+    return res.status(500).json({ message: err });
+  }
+}
+
 
 
 // user delete

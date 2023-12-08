@@ -15,6 +15,7 @@ router.get('/', userController.getAllUsers);
 router.patch("/updateProfile/:id", userController.updateProfile);
 router.get('/:id', userController.userInfo);
 router.patch("/:id", userController.updateBio);
+router.put("/:id", userController.updatePseudo);
 router.delete('/:id', userController.deleteUser);
 router.patch('/follow/:id', userController.follow);
 router.patch('/unfollow/:id', userController.unfollow);
