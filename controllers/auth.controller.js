@@ -20,7 +20,7 @@ module.exports.signUp = async (req, res) => {
     }
     catch (err) {
         const errors = signUpErrors(err);
-        res.status(400).json({ errors }); // Utilisez un code d'erreur 400 pour indiquer une requête incorrecte
+        res.status(400).json({ errors }); 
     }
 }
 

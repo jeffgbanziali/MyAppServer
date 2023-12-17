@@ -41,10 +41,12 @@ module.exports.updateProfile = async (req, res) => {
       { $set: { picture: imageUrl } },
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
+    console.log('Successful profile photo update. New picture :', updatedUser.picture);
     res.status(200).json({
       _id: updatedUser._id,
       picture: updatedUser.picture,
     });
+
   } catch (err) {
     console.error('Error during profile update:', err);
     let errorMessage = 'An error occurred during profile update.';
@@ -57,7 +59,6 @@ module.exports.updateProfile = async (req, res) => {
 
 //user update
 module.exports.updateBio = async (req, res) => {
-  console.log('Requête de mise à jour de la biographie :', req.body);
 
   if (!ObjectID.isValid(req.params.id))
     return res.status(400).send("ID unknown : " + req.params.id);
@@ -72,17 +73,16 @@ module.exports.updateBio = async (req, res) => {
       },
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
-    console.log('Mise à jour de la biographie réussie. Nouveau biographie :', user.bio);
+    console.log('Successful bio update. New bio :', user.bio);
     return res.status(200).send(user);
   } catch (err) {
-    console.error('Erreur lors de la mise à jour de la biographie :', err);
+    console.error('Error updating bio :', err);
     return res.status(500).json({ message: err });
   }
 };
 
 
 module.exports.updatePseudo = async (req, res) => {
-  console.log('Requête de mise à jour du pseudo :', req.body);
   if (!ObjectID.isValid(req.params.id))
     return res.status(400).send("Id unknow : " + req.params.id);
   try {
@@ -93,10 +93,10 @@ module.exports.updatePseudo = async (req, res) => {
       },
       { new: true, upsert: true, setDefaultsOnInsert: true }
     );
-    console.log('Mise à jour du pseudo réussie. Nouveau pseudo :', user.pseudo);
+    console.log('Successful psueod update. New pseudo :', user.pseudo);
     return res.status(200).send(user);
   } catch (err) {
-    console.error('Erreur lors de la mise à jour du pseudo :', err);
+    console.error('Error updating pseudo :', err);
     return res.status(500).json({ message: err });
   }
 }

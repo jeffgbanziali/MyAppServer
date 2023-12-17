@@ -19,7 +19,7 @@ const PostSchema = new mongoose.Schema(
         },
         likers: {
             type: [String],
-            default: [], 
+            default: [],
         },
         comments: {
             type: [
@@ -28,6 +28,27 @@ const PostSchema = new mongoose.Schema(
                     commenterPseudo: String,
                     text: String,
                     timestamp: Number,
+                    replies: {
+                        type: [{
+                            replierId: {
+                                type: String,
+                                required: true,
+                            },
+                            replierPseudo: {
+                                type: String,
+                                required: true,
+                            },
+                            text: {
+                                type: String,
+                                required: true,
+                            },
+                            timestamp: {
+                                type: Number,
+                                required: true,
+                            },
+                        }],
+                        default: [],
+                    },
                 }
             ],
             default: [],

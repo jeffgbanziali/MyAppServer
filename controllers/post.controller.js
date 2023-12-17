@@ -244,3 +244,40 @@ module.exports.deleteCommentPost = (req, res) => {
         return res.status(400).send(err);
     }
 };
+
+
+// Import necessary models and modules
+
+// ... (existing imports)
+
+module.exports.replyComment = async (req, res) => {
+    try {
+        if (!ObjectID.isValid(req.params.id))
+            return res.status(400).send("ID unknown : " + req.params.id);
+
+        const postId = req.params.id;
+        const commentId = req.body.commentId;
+
+        const updatedPost = await PostModel.findByIdAndUpdate(
+            postId,
+            {
+                $push: {
+                    "comments.$[outerComment].replies": {
+                        replierId: req.body.replierId,
+                        replierPseudo: req.body.replierPseudo,
+                        text: req.body.text,
+                        timestamp: new Date().getTime(),
+                    },
+                },
+            },
+            {
+                new: true,
+                arrayFilters: [{ "outerComment._id": commentId }],
+            }
+        );
+
+        res.send(updatedPost);
+    } catch (err) {
+        return res.status(500).send({ message: err });
+    }
+};
