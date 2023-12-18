@@ -28,6 +28,11 @@ const PostSchema = new mongoose.Schema(
                     commenterPseudo: String,
                     text: String,
                     timestamp: Number,
+                    commentLikers: {
+                        type: [String],
+                        default: [],
+                    },
+
                     replies: {
                         type: [{
                             replierId: {
@@ -45,6 +50,10 @@ const PostSchema = new mongoose.Schema(
                             timestamp: {
                                 type: Number,
                                 required: true,
+                            },
+                            replierLikers: {
+                                type: [String],
+                                default: [],
                             },
                             repliedTo: {
                                 replierToId: {

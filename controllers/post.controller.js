@@ -76,9 +76,6 @@ module.exports.createPost = async (req, res) => {
 
 
 
-
-
-
 module.exports.updatePost = (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send("ID unknown : " + req.params.id);
@@ -289,4 +286,69 @@ module.exports.replyComment = async (req, res) => {
     }
 };
 
+
+
+
+
+module.exports.likeComment = async (req, res) => {
+    const postId = req.params.postId;
+    const commentId = req.params.commentId;
+    const userId = req.body.userId;
+
+    if (!ObjectID.isValid(postId) || !ObjectID.isValid(commentId))
+        return res.status(400).send("Invalid post or comment ID");
+
+    try {
+        const updatedPost = await PostModel.findOneAndUpdate(
+            { _id: postId, "comments._id": commentId },
+            {
+                $addToSet: { "comments.$.commentLikers": userId },
+            },
+            { new: true }
+        );
+
+        if (!updatedPost) {
+            return res.status(404).send("Post or comment not found");
+        }
+
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            userId,
+            {
+                $addToSet: { likedComments: commentId },
+            },
+            { new: true }
+        );
+
+        res.send({ updatedPost, updatedUser });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+};
+
+/*module.exports.likeComment = async (req, res) => {
+    if (!ObjectID.isValid(req.params.postId) || !ObjectID.isValid(req.params.commentId))
+        return res.status(400).send("ID inconnu : " + req.params.postId + " ou " + req.params.commentId);
+
+    try {
+        await PostModel.findByIdAndUpdate(
+            req.params.postId,
+            {
+                $addToSet: { 'comments.$[outerComment].commentLikers': req.body.userId },
+            },
+            { arrayFilters: [{ 'outerComment._id': req.params.commentId }], new: true })
+            .then((data) => {
+                UserModel.findByIdAndUpdate(
+                    req.body.userId,
+                    {
+                        $addToSet: { likes: req.params.commentId },
+                    },
+                    { new: true })
+                    .then((data) => res.send(data))
+                    .catch((err) => res.status(501).send({ message: err }));
+            })
+            .catch((err) => res.status(502).send({ message: err }));
+    } catch (err) {
+        return res.status(400).send(err);
+    }
+};*/
 
