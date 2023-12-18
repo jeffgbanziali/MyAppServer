@@ -245,11 +245,6 @@ module.exports.deleteCommentPost = (req, res) => {
     }
 };
 
-
-// Import necessary models and modules
-
-// ... (existing imports)
-
 module.exports.replyComment = async (req, res) => {
     try {
         if (!ObjectID.isValid(req.params.id))
@@ -257,19 +252,31 @@ module.exports.replyComment = async (req, res) => {
 
         const postId = req.params.id;
         const commentId = req.body.commentId;
+        const repliedTo = req.body.repliedTo;
+
+        const update = {
+            $push: {
+                "comments.$[outerComment].replies": {
+                    replierId: req.body.replierId,
+                    replierPseudo: req.body.replierPseudo,
+                    text: req.body.text,
+                    timestamp: new Date().getTime(),
+                    repliedTo: req.body.repliedTo,
+                },
+            },
+        };
+
+        if (repliedTo) {
+            update.$push["comments.$[outerComment].replies"].repliedTo = {
+                replierToId: repliedTo.replierToId || null,
+                replierToPseudo: repliedTo.replierToPseudo || null,
+            };
+        }
+
 
         const updatedPost = await PostModel.findByIdAndUpdate(
             postId,
-            {
-                $push: {
-                    "comments.$[outerComment].replies": {
-                        replierId: req.body.replierId,
-                        replierPseudo: req.body.replierPseudo,
-                        text: req.body.text,
-                        timestamp: new Date().getTime(),
-                    },
-                },
-            },
+            update,
             {
                 new: true,
                 arrayFilters: [{ "outerComment._id": commentId }],
@@ -281,3 +288,5 @@ module.exports.replyComment = async (req, res) => {
         return res.status(500).send({ message: err });
     }
 };
+
+

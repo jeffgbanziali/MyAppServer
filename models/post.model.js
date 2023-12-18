@@ -46,6 +46,16 @@ const PostSchema = new mongoose.Schema(
                                 type: Number,
                                 required: true,
                             },
+                            repliedTo: {
+                                replierToId: {
+                                    type: String,
+                                    required: true,
+                                },
+                                replierToPseudo: {
+                                    type: String,
+                                    required: true,
+                                },
+                            },
                         }],
                         default: [],
                     },
