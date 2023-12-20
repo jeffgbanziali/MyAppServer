@@ -28,6 +28,13 @@ const PostSchema = new mongoose.Schema(
                     commenterPseudo: String,
                     text: String,
                     timestamp: Number,
+                    commentMedia: {
+                        type: String,
+                    },
+                    commentType: {
+                        type: String,
+                        enum: ['image', 'audio', 'gif'],
+                    },
                     commentLikers: {
                         type: [String],
                         default: [],
@@ -50,6 +57,13 @@ const PostSchema = new mongoose.Schema(
                             timestamp: {
                                 type: Number,
                                 required: true,
+                            },
+                            replyMedia: {
+                                type: String,
+                            },
+                            replyType: {
+                                type: String,
+                                enum: ['image', 'audio', 'gif'],
                             },
                             replierLikers: {
                                 type: [String],

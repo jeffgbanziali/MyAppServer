@@ -168,10 +168,22 @@ module.exports.unlikePost = async (req, res) => {
 
 //write comment the post
 module.exports.commentPost = async (req, res) => {
-    if (!ObjectID.isValid(req.params.id))
-        return res.status(400).send("ID unknown : " + req.params.id);
-
     try {
+        // Validate post ID
+        if (!ObjectID.isValid(req.params.id))
+            return res.status(400).send("ID unknown : " + req.params.id);
+
+        // Initialize media variables
+        let mediaUrl = null;
+        let mediaType = null;
+
+        // Check if media exists in the request
+        if (req.body.media) {
+            mediaUrl = req.body.media.url;
+            mediaType = req.body.media.type;
+        }
+
+        // Update the post with a new comment
         const updatedPost = await PostModel.findByIdAndUpdate(
             req.params.id,
             {
@@ -181,22 +193,112 @@ module.exports.commentPost = async (req, res) => {
                         commenterPseudo: req.body.commenterPseudo,
                         text: req.body.text,
                         timestamp: new Date().getTime(),
+                        commentMedia: req.body.commentMedia,
+                        commentType: req.body.commentType,
                     },
                 },
             },
             { new: true }
         );
 
+        // Add media properties to the post if they exist
+        if (mediaUrl) {
+            updatedPost.commentMedia = mediaUrl;
+        }
+
+        if (mediaType) {
+            updatedPost.commentType = mediaType;
+        }
+
+        // Get the ID of the last added comment
         const lastComment = updatedPost.comments[updatedPost.comments.length - 1];
         const commentId = lastComment._id;
 
+        // Send the response with the comment ID
         res.send({ commentId });
     } catch (err) {
-        return res.status(500).send({ message: err });
+        // Log and handle errors
+        console.error('Error during comment operation:', err);
+        return res.status(500).send({ message: 'An error occurred during comment operation.' });
     }
 };
 
 
+// Reply to a comment on a post
+module.exports.replyComment = async (req, res) => {
+    try {
+        // Validate post ID
+        if (!ObjectID.isValid(req.params.id))
+            return res.status(400).send("ID unknown : " + req.params.id);
+
+        // Extract necessary information
+        const postId = req.params.id;
+        const commentId = req.body.commentId;
+        const repliedTo = req.body.repliedTo;
+
+        // Initialize media variables
+        let mediaUrl = null;
+        let mediaType = null;
+
+        // Check if media exists in the request
+        if (req.body.media) {
+            mediaUrl = req.body.media.url;
+            mediaType = req.body.media.type;
+        }
+
+        // Construct the update object for adding a reply
+        const update = {
+            $push: {
+                "comments.$[outerComment].replies": {
+                    replierId: req.body.replierId,
+                    replierPseudo: req.body.replierPseudo,
+                    text: req.body.text,
+                    timestamp: new Date().getTime(),
+                    replyMedia: req.body.replyMedia,
+                    replyType: req.body.replyType,
+                    repliedTo: req.body.repliedTo,
+                },
+            },
+        };
+
+        // Add media properties to the update object if they exist
+        if (mediaUrl) {
+            update.replyMedia = mediaUrl;
+        }
+
+        if (mediaType) {
+            update.replyType = mediaType;
+        }
+
+        // Add repliedTo information to the update object if provided
+        if (repliedTo) {
+            update.$push["comments.$[outerComment].replies"].repliedTo = {
+                replierToId: repliedTo.replierToId || null,
+                replierToPseudo: repliedTo.replierToPseudo || null,
+            };
+        }
+
+        // Update the post with the new reply
+        const updatedPost = await PostModel.findByIdAndUpdate(
+            postId,
+            update,
+            {
+                new: true,
+                arrayFilters: [{ "outerComment._id": commentId }],
+            }
+        );
+
+        // Send the updated post in the response
+        res.send(updatedPost);
+    } catch (err) {
+        // Log and handle errors
+        console.error('Error during reply operation:', err);
+        return res.status(500).send({ message: 'An error occurred during reply operation.' });
+    }
+};
+
+
+// edit a comment post
 module.exports.editCommentPost = (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send("ID unknown : " + req.params.id);
@@ -220,6 +322,7 @@ module.exports.editCommentPost = (req, res) => {
     }
 };
 
+// delete a comment post
 module.exports.deleteCommentPost = (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send("ID unknown : " + req.params.id);
@@ -242,53 +345,7 @@ module.exports.deleteCommentPost = (req, res) => {
     }
 };
 
-module.exports.replyComment = async (req, res) => {
-    try {
-        if (!ObjectID.isValid(req.params.id))
-            return res.status(400).send("ID unknown : " + req.params.id);
-
-        const postId = req.params.id;
-        const commentId = req.body.commentId;
-        const repliedTo = req.body.repliedTo;
-
-        const update = {
-            $push: {
-                "comments.$[outerComment].replies": {
-                    replierId: req.body.replierId,
-                    replierPseudo: req.body.replierPseudo,
-                    text: req.body.text,
-                    timestamp: new Date().getTime(),
-                    repliedTo: req.body.repliedTo,
-                },
-            },
-        };
-
-        if (repliedTo) {
-            update.$push["comments.$[outerComment].replies"].repliedTo = {
-                replierToId: repliedTo.replierToId || null,
-                replierToPseudo: repliedTo.replierToPseudo || null,
-            };
-        }
-
-
-        const updatedPost = await PostModel.findByIdAndUpdate(
-            postId,
-            update,
-            {
-                new: true,
-                arrayFilters: [{ "outerComment._id": commentId }],
-            }
-        );
-
-        res.send(updatedPost);
-    } catch (err) {
-        return res.status(500).send({ message: err });
-    }
-};
-
-
-
-
+// like a comment post
 
 module.exports.likeComment = async (req, res) => {
     const postId = req.params.postId;
@@ -325,30 +382,4 @@ module.exports.likeComment = async (req, res) => {
     }
 };
 
-/*module.exports.likeComment = async (req, res) => {
-    if (!ObjectID.isValid(req.params.postId) || !ObjectID.isValid(req.params.commentId))
-        return res.status(400).send("ID inconnu : " + req.params.postId + " ou " + req.params.commentId);
-
-    try {
-        await PostModel.findByIdAndUpdate(
-            req.params.postId,
-            {
-                $addToSet: { 'comments.$[outerComment].commentLikers': req.body.userId },
-            },
-            { arrayFilters: [{ 'outerComment._id': req.params.commentId }], new: true })
-            .then((data) => {
-                UserModel.findByIdAndUpdate(
-                    req.body.userId,
-                    {
-                        $addToSet: { likes: req.params.commentId },
-                    },
-                    { new: true })
-                    .then((data) => res.send(data))
-                    .catch((err) => res.status(501).send({ message: err }));
-            })
-            .catch((err) => res.status(502).send({ message: err }));
-    } catch (err) {
-        return res.status(400).send(err);
-    }
-};*/
 
