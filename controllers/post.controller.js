@@ -33,18 +33,21 @@ module.exports.getPostsByUser = async (req, res) => {
 
 module.exports.createPost = async (req, res) => {
     try {
-        let imageUrl = null;  // Initialise imageUrl à null
+        let media = null; // Initialise le tableau de médias à null
 
-        // Vérifie si l'URL de l'image a été envoyée depuis le client
-        if (req.body.imageFileName) {
-            imageUrl = req.body.imageFileName;
+        // Vérifie si des médias ont été envoyés depuis le client
+        if (req.body.media) {
+            media = req.body.media.map(item => ({
+                mediaUrl: item.mediaUrl,
+                mediaType: item.mediaType,
+            }));
         }
 
         // Création d'une nouvelle instance du modèle de poste
         const newPost = new PostModel({
             posterId: req.body.posterId,
             message: req.body.message,
-            picture: imageUrl,  // Utilise l'URL de l'image
+            media: media, // Utilise le tableau de médias
             likers: [],
             comments: [],
         });
@@ -58,7 +61,7 @@ module.exports.createPost = async (req, res) => {
             _id: savedPost._id,
             posterId: savedPost.posterId,
             message: savedPost.message,
-            imageFileName: savedPost.imageFileName,
+            media: savedPost.media,
             likers: savedPost.likers,
             comments: savedPost.comments,
             createdAt: savedPost.createdAt,
@@ -73,6 +76,7 @@ module.exports.createPost = async (req, res) => {
         res.status(500).json({ errors });
     }
 };
+
 
 
 

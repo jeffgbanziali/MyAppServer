@@ -11,12 +11,15 @@ const PostSchema = new mongoose.Schema(
             trim: true,
             maxlength: 500,
         },
-        picture: {
-            type: String,
-        },
-        video: {
-            type: String,
-        },
+        media: [{
+            mediaUrl: {
+                type: String,
+            },
+            mediaType: {
+                type: String,
+                enum: ['video', 'image', 'audio', 'gif'],
+            },
+        }],
         likers: {
             type: [String],
             default: [],
@@ -33,7 +36,7 @@ const PostSchema = new mongoose.Schema(
                     },
                     commentType: {
                         type: String,
-                        enum: ['image', 'audio', 'gif'],
+                        enum: ['video', 'image', 'audio', 'gif'],
                     },
                     commentLikers: {
                         type: [String],
