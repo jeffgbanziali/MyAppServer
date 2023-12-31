@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const multer = require("multer");
 const storyController = require('../controllers/story.controller');
+const storageConfig = multer.memoryStorage();
+const upload = multer({ storage: storageConfig });
 
 // Lire toutes les histoires
 router.get('/', storyController.readStories);
@@ -8,6 +11,7 @@ router.get('/:id', storyController.readStoriesById);
 
 // Créer une nouvelle histoire
 router.post('/', storyController.createStory);
+//router.post('/', upload.single("filename"), storyController.createStory);
 
 // Aimer une histoire
 router.patch('/like-story/:id', storyController.likeStory);

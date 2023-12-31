@@ -28,7 +28,7 @@ const corsOptions = {
 //socket.io
 const io = require("socket.io")(8900, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://192.168.0.14:3000",
   },
 });
 

@@ -3,6 +3,10 @@ const UserModel = require('../models/user.model');
 const { uploadErrors } = require('../utils/errors.utils');
 const ObjectID = require('mongoose').Types.ObjectId;
 const sizeOf = require('image-size');
+const { firestore, storage, uploadImageToFirebase } = require('../config/firebase');
+const fs = require("fs");
+const { promisify } = require("util");
+const pipeline = promisify(require("stream").pipeline);
 
 
 const MAX_FILE_SIZE = 500000;
@@ -28,6 +32,60 @@ module.exports.getPostsByUser = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
+
+/*module.exports.createPost = async (req, res) => {
+    try {
+        let media;
+
+        // Vérifie si des médias ont été envoyés depuis le client
+        if (req.body.media) {
+            // Utilise Promise.all pour traiter toutes les opérations d'upload en parallèle
+            const mediaUploadPromises = req.body.media.map(async (item) => {
+                // Upload chaque média vers Firebase Storage et récupère l'URL
+                const mediaUrl = await uploadImageToFirebase(item.mediaUrl, `${req.body.posterId}_${Date.now()}_${item.mediaType}`);
+                return {
+                    mediaUrl,
+                    mediaType: item.mediaType,
+                };
+            });
+            // Attends que toutes les opérations d'upload soient terminées
+            media = await Promise.all(mediaUploadPromises);
+        }
+
+        // Création d'une nouvelle instance du modèle de poste
+        const newPost = new PostModel({
+            posterId: req.body.posterId,
+            message: req.body.message,
+            media: media, // Utilise le tableau de médias
+            likers: [],
+            comments: [],
+        });
+
+        // Sauvegarde du nouveau poste dans la base de données MongoDB
+        const savedPost = await newPost.save();
+        console.log('Post saved to MongoDB:', savedPost);
+
+        // Renvoie les informations nécessaires au front-end
+        res.status(201).json({
+            _id: savedPost._id,
+            posterId: savedPost.posterId,
+            message: savedPost.message,
+            media: savedPost.media,
+            likers: savedPost.likers,
+            comments: savedPost.comments,
+            createdAt: savedPost.createdAt,
+            updatedAt: savedPost.updatedAt,
+        });
+    } catch (err) {
+        console.error('Error during post creation:', err);
+        let errorMessage = 'An error occurred during post creation.';
+        if (err.message) errorMessage = err.message;
+
+        const errors = uploadErrors(errorMessage);
+        res.status(500).json({ errors });
+    }
+};*/
 
 
 
@@ -354,7 +412,7 @@ module.exports.deleteCommentPost = (req, res) => {
 module.exports.likeComment = async (req, res) => {
     const postId = req.params.postId;
     const commentId = req.params.commentId;
-    const userId = req.body.userId;
+    const userId = req.body.id;
 
     if (!ObjectID.isValid(postId) || !ObjectID.isValid(commentId))
         return res.status(400).send("Invalid post or comment ID");
@@ -376,6 +434,121 @@ module.exports.likeComment = async (req, res) => {
             userId,
             {
                 $addToSet: { likedComments: commentId },
+            },
+            { new: true }
+        );
+
+        res.send({ updatedPost, updatedUser });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+};
+
+
+
+module.exports.unlikeComment = async (req, res) => {
+    const postId = req.params.postId;
+    const commentId = req.params.commentId;
+    const userId = req.body.id;
+    ;
+
+    if (!ObjectID.isValid(postId) || !ObjectID.isValid(commentId))
+        return res.status(400).send("Invalid post or comment ID");
+
+    try {
+        const updatedPost = await PostModel.findOneAndUpdate(
+            { _id: postId, "comments._id": commentId },
+            {
+                $pull: { "comments.$.commentLikers": userId },
+            },
+            { new: true }
+        );
+
+        if (!updatedPost) {
+            return res.status(404).send("Post or comment not found");
+        }
+
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            userId,
+            {
+                $pull: { likedComments: commentId },
+            },
+            { new: true }
+        );
+
+        res.send({ updatedPost, updatedUser });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+};
+
+
+// like a reply to a comment
+module.exports.likeReply = async (req, res) => {
+    const postId = req.params.postId;
+    const commentId = req.params.commentId;
+    const replyId = req.params.replyId;
+    const userId = req.body.id;
+
+    if (!ObjectID.isValid(postId) || !ObjectID.isValid(commentId) || !ObjectID.isValid(replyId))
+        return res.status(400).send("Invalid post, comment, or reply ID");
+
+    try {
+        const updatedPost = await PostModel.findOneAndUpdate(
+            { _id: postId, "comments._id": commentId, "comments.replies._id": replyId },
+            {
+                $addToSet: { "comments.$[outerComment].replies.$[innerReply].replierLikers": userId },
+            },
+            { new: true, arrayFilters: [{ "outerComment._id": commentId }, { "innerReply._id": replyId }] }
+        );
+
+        if (!updatedPost) {
+            return res.status(404).send("Post, comment, or reply not found");
+        }
+
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            userId,
+            {
+                $addToSet: { likedReplies: replyId },
+            },
+            { new: true }
+        );
+
+        res.send({ updatedPost, updatedUser });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+};
+
+
+
+// unlike a reply to a comment
+module.exports.unlikeReply = async (req, res) => {
+    const postId = req.params.postId;
+    const commentId = req.params.commentId;
+    const replyId = req.params.replyId;
+    const userId = req.body.id;
+
+    if (!ObjectID.isValid(postId) || !ObjectID.isValid(commentId) || !ObjectID.isValid(replyId))
+        return res.status(400).send("Invalid post, comment, or reply ID");
+
+    try {
+        const updatedPost = await PostModel.findOneAndUpdate(
+            { _id: postId, "comments._id": commentId, "comments.replies._id": replyId },
+            {
+                $pull: { "comments.$[outerComment].replies.$[innerReply].replierLikers": userId },
+            },
+            { new: true, arrayFilters: [{ "outerComment._id": commentId }, { "innerReply._id": replyId }] }
+        );
+
+        if (!updatedPost) {
+            return res.status(404).send("Post, comment, or reply not found");
+        }
+
+        const updatedUser = await UserModel.findByIdAndUpdate(
+            userId,
+            {
+                $pull: { likedReplies: replyId },
             },
             { new: true }
         );

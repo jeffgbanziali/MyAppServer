@@ -1,7 +1,9 @@
 const StoryModel = require('../models/story.model');
 const UserModel = require('../models/user.model');
 const ObjectID = require('mongoose').Types.ObjectId;
+const multer = require('multer');
 const { uploadErrors } = require('../utils/errors.utils');
+const { uploadStoryToFirebase } = require('../config/firebase');
 
 module.exports.readStories = async (req, res) => {
     try {
@@ -25,6 +27,7 @@ module.exports.readStoriesById = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
+
 
 
 module.exports.createStory = async (req, res) => {
@@ -85,6 +88,59 @@ module.exports.createStory = async (req, res) => {
         res.status(500).json({ errors });
     }
 };
+
+
+
+/*module.exports.createStory = async (req, res) => {
+    try {
+        let mediaUrl = null;
+
+        const mediaName = `${Date.now()}-${req.body.media}`;
+
+        // Vérifie si le conteneur existe pour l'utilisateur
+        let existingContainer = await StoryModel.findOne({ 'container.posterId': req.body.posterId });
+
+        // Crée un nouvel objet story en fonction de la présence de texte, de média et de type de média
+        const newStory = {
+            text: req.body.text,
+            media: mediaUrl = await uploadStoryToFirebase(req.body.media, mediaName),
+            media_type: req.body.media.type || "image",
+            expires_at: req.body.expires_at,
+        };
+
+        // Si le conteneur n'existe pas, crée un nouveau conteneur avec cette histoire
+        if (!existingContainer) {
+            existingContainer = new StoryModel({
+                container: {
+                    posterId: req.body.posterId,
+                    stories: [newStory],
+                },
+            });
+
+            await existingContainer.save();
+            console.log({ message: 'Story created successfully!', story: newStory });
+        } else {
+            // Si le conteneur existe, ajoute cette histoire au tableau 'stories'
+            existingContainer.container.stories.push(newStory);
+
+            // Enregistre le conteneur mis à jour dans la base de données
+            await existingContainer.save();
+            console.log({ message: 'Story added to container successfully!', story: newStory });
+        }
+
+        res.status(201).json({ message: 'Story added to container successfully' });
+    } catch (err) {
+        console.error('Error during story creation:', err);
+        let errorMessage = 'An error occurred during story creation.';
+        if (err.message) errorMessage = err.message;
+
+        const errors = uploadErrors(errorMessage);
+        res.status(500).json({ errors });
+    }
+};*/
+
+
+
 
 
 module.exports.likeStory = async (req, res) => {
