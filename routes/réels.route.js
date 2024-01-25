@@ -16,14 +16,14 @@ router.patch("/like-videoReels/:id", videoRéelsController.likeVideoRéels);
 router.patch("/dislike-videoReels/:id", videoRéelsController.dislikeVideoRéels);
 
 // Commenter une vidéo réelle
-router.patch('/comment-post/:id', videoRéelsController.commentVideoRéels);
-router.patch('/edit-comment-post/:id', videoRéelsController.editCommentVideoRéels);
-router.patch('/delete-comment-post/:id', videoRéelsController.deleteCommentVideoRéels);
-router.post('/comment-post/:id/reply', videoRéelsController.replyCommentVideoRéels);
-router.patch('/like-comment/:postId/:commentId', videoRéelsController.likeCommentVideoRéels);
-router.patch('/unlike-comment/:postId/:commentId', videoRéelsController.unlikecommentVideoRéels);
-router.patch('/like-reply/:postId/:commentId/:replyId', videoRéelsController.likeReplyCommentVideoRéels);
-router.patch('/unlike-reply/:postId/:commentId/:replyId', videoRéelsController.unlikeReplyCommentVideoRéels);
+router.patch('/comment-videoReels/:id', videoRéelsController.commentVideoRéels);
+router.patch('/edit-comment-videoReels/:id', videoRéelsController.editCommentVideoRéels);
+router.patch('/delete-comment-videoReels/:id', videoRéelsController.deleteCommentVideoRéels);
+router.post('/comment-videoReels/:id/reply', videoRéelsController.replyCommentVideoRéels);
+router.patch('/like-comment-videoReels/:videoReelsId/:commentId', videoRéelsController.likeCommentVideoRéels);
+router.patch('/unlike-comment-videoReels/:videoReelsId/:commentId', videoRéelsController.unlikecommentVideoRéels);
+router.patch('/like-reply-comment-videoReels/:videoReelsId/:commentId/:replyId', videoRéelsController.likeReplyCommentVideoRéels);
+router.patch('/unlike-reply-comment-videoReels/:videoReelsId/:commentId/:replyId', videoRéelsController.unlikeReplyCommentVideoRéels);
 // Voir une vidéo réelle
 router.post("/view-videoReels", videoRéelsController.viewVideoRéels);
 

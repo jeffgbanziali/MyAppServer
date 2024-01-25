@@ -337,7 +337,7 @@ module.exports.deleteCommentVideoRéels = (req, res) => {
 // like a comment réels
 
 module.exports.likeCommentVideoRéels = async (req, res) => {
-  const postId = req.params.postId;
+  const postId = req.params.id;
   const commentId = req.params.commentId;
   const userId = req.body.id;
 
@@ -373,7 +373,7 @@ module.exports.likeCommentVideoRéels = async (req, res) => {
 
 // unlike a comment réels
 module.exports.unlikecommentVideoRéels = async (req, res) => {
-  const postId = req.params.postId;
+  const postId = req.params.id;
   const commentId = req.params.commentId;
   const userId = req.body.id;
   ;
@@ -411,7 +411,7 @@ module.exports.unlikecommentVideoRéels = async (req, res) => {
 
 // like a reply to a comment
 module.exports.likeReplyCommentVideoRéels = async (req, res) => {
-  const postId = req.params.postId;
+  const postId = req.params.id;
   const commentId = req.params.commentId;
   const replyId = req.params.replyId;
   const userId = req.body.id;
@@ -448,7 +448,7 @@ module.exports.likeReplyCommentVideoRéels = async (req, res) => {
 
 
 module.exports.unlikeReplyCommentVideoRéels = async (req, res) => {
-  const postId = req.params.postId;
+  const postId = req.params.id;
   const commentId = req.params.commentId;
   const replyId = req.params.replyId;
   const userId = req.body.id;
