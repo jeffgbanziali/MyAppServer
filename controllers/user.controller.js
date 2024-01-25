@@ -1,7 +1,6 @@
 const UserModel = require("../models/user.model");
 const { uploadErrors } = require("../utils/errors.utils");
 const ObjectID = require("mongoose").Types.ObjectId;
-const router = require("express").Router();
 
 //user model
 module.exports.getAllUsers = async (req, res) => {
@@ -232,4 +231,62 @@ module.exports.unfollow = async (req, res) => {
     return res.status(500).json({ message: err });
   }
 };
+
+
+module.exports.addFavoritePost = async (req, res) => {
+  const { userId, postId } = req.body;
+
+  // Vérifie si les ID sont valides
+  if (!ObjectID.isValid(userId) || !ObjectID.isValid(postId)) {
+    return res.status(400).send("ID invalide");
+  }
+
+  try {
+    // Vérifie si l'utilisateur existe
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).send("Utilisateur non trouvé");
+    }
+
+    // Vérifie si le post existe déjà dans les favoris
+    const postExists = user.favoritePost.includes(postId);
+    if (postExists) {
+      return res.status(409).send("Le post est déjà dans les favoris");
+    }
+
+    // Ajoute le post aux favoris de l'utilisateur
+    user.favoritePost.push(postId);
+    await user.save();
+
+    res.status(200).send("Post ajouté aux favoris avec succès");
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
+module.exports.removeFavoritePost = async (req, res) => {
+  const { userId, postId } = req.body;
+
+  // Vérifie si les ID sont valides
+  if (!ObjectID.isValid(userId) || !ObjectID.isValid(postId)) {
+    return res.status(400).send("ID invalide");
+  }
+
+  try {
+    // Vérifie si l'utilisateur existe
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).send("Utilisateur non trouvé");
+    }
+
+    // Retire le post des favoris de l'utilisateur
+    user.favoritePost = user.favoritePost.filter(fav => fav !== postId);
+    await user.save();
+
+    res.status(200).send("Post retiré des favoris avec succès");
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
 

@@ -20,6 +20,8 @@ router.delete('/:id', userController.deleteUser);
 router.patch('/follow/:id', userController.follow);
 router.patch('/unfollow/:id', userController.unfollow);
 router.get('/friends/:id', userController.getFriends);
+router.post('/addFavoritePost', userController.addFavoritePost);
+router.post('/removeFavoritePost', userController.removeFavoritePost);
 
 
 
