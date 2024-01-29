@@ -66,6 +66,10 @@ const userSchema = mongoose.Schema({
     favoritePost:
     {
         type: [String]
+    },
+    savedPost:
+    {
+        type: [String]
     }
 
 },

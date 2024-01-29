@@ -290,3 +290,60 @@ module.exports.removeFavoritePost = async (req, res) => {
 };
 
 
+module.exports.savedPost = async (req, res) => {
+  const { userId, postId } = req.body;
+
+  // Vérifie si les ID sont valides
+  if (!ObjectID.isValid(userId) || !ObjectID.isValid(postId)) {
+    return res.status(400).send("ID invalide");
+  }
+
+  try {
+    // Vérifie si l'utilisateur existe
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).send("Utilisateur non trouvé");
+    }
+
+    // Vérifie si le post existe déjà dans les posts enregistrés
+    const postExists = user.savedPost.includes(postId);
+    if (postExists) {
+      return res.status(409).send("Le post est déjà enregistré");
+    }
+
+    // Enregistre le post aux favoris de l'utilisateur
+    user.savedPost.push(postId);
+    await user.save();
+
+    res.status(200).send("Post enregistré avec succès");
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
+module.exports.removeSavedPost = async (req, res) => {
+  const { userId, postId } = req.body;
+
+  // Vérifie si les ID sont valides
+  if (!ObjectID.isValid(userId) || !ObjectID.isValid(postId)) {
+    return res.status(400).send("ID invalide");
+  }
+
+  try {
+    // Vérifie si l'utilisateur existe
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).send("Utilisateur non trouvé");
+    }
+
+    // Retire le post de ceux enregistrés par l'utilisateur
+    user.savedPost = user.savedPost.filter(fav => fav !== postId);
+    await user.save();
+
+    res.status(200).send("Post retiré de ceux enregistrés avec succès");
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
+
