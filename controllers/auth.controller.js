@@ -20,7 +20,7 @@ module.exports.signUp = async (req, res) => {
     }
     catch (err) {
         const errors = signUpErrors(err);
-        res.status(400).json({ errors }); 
+        res.status(400).json({ errors });
     }
 }
 
@@ -45,4 +45,23 @@ module.exports.logout = (req, res) => {
     res.cookie('jwt', '', { expires: new Date(0), path: '/' });
     res.status(200).json({ message: "logout successful" });
     console.log("logout successful");
+};
+
+
+module.exports.changePassword = async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    const userId = req.user.id; // Obtenez l'ID de l'utilisateur à partir de la demande
+
+    try {
+        const user = await UserModel.findById(userId); // Trouvez l'utilisateur dans la base de données
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        await user.updatePassword(oldPassword, newPassword); // Mettez à jour le mot de passe de l'utilisateur
+        res.status(200).json({ message: "Password updated successfully" });
+    } catch (error) {
+        console.error("Error updating password:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 };

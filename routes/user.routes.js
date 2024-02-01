@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const authController = require('../controllers/auth.controller');
 const userController = require('../controllers/user.controller');
+const authMiddleware = require('../middleware/auth.middleware');
 
 
 
@@ -8,6 +9,7 @@ const userController = require('../controllers/user.controller');
 router.post("/register", authController.signUp);
 router.post("/login", authController.signIn);
 router.get("/logout", authController.logout);
+//router.post('/change-password/:id', authMiddleware.requireAuth, authController.changePassword);
 
 
 //userController

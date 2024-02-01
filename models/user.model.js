@@ -14,7 +14,7 @@ const userSchema = mongoose.Schema({
 
     },
 
-    fisrtName: {
+    firstName: {
         type: String,
 
     },
@@ -70,6 +70,10 @@ const userSchema = mongoose.Schema({
     savedPost:
     {
         type: [String]
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 
 },
@@ -99,6 +103,19 @@ userSchema.statics.login = async function (email, password) {
     }
     throw Error('incorrect email')
 }
+
+
+userSchema.methods.updatePassword = async function (oldPassword, newPassword) {
+    const isMatch = await bcrypt.compare(oldPassword, this.password);
+    if (!isMatch) {
+        throw new Error('Incorrect old password');
+    }
+
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(newPassword, salt);
+    await this.save();
+}
+
 
 
 

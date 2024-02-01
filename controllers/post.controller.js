@@ -387,12 +387,12 @@ module.exports.deleteCommentPost = (req, res) => {
         return res.status(400).send("ID unknown : " + req.params.id);
 
     try {
-        return PostModel.findByIdAndUpdate(
+        return PostModel.findByIdAndRemove(
             req.params.id,
             {
                 $pull: {
                     comments: {
-                        _id: req.body.commentId,
+                        _id: req.body.id,
                     },
                 },
             },
