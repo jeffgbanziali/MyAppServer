@@ -10,17 +10,13 @@ const userSchema = mongoose.Schema({
         unique: true,
         minlength: 3,
         maxlength: 55,
-        trimp: true,
-
+        trim: true,
     },
-
     firstName: {
         type: String,
-
     },
     lastName: {
         type: String,
-
     },
     email: {
         type: String,
@@ -43,10 +39,9 @@ const userSchema = mongoose.Schema({
         minlength: 8,
     },
     phoneNumber: {
-        type: String
+        type: String,
     },
     picture: {
-
         type: String,
         default: null,
     },
@@ -55,32 +50,92 @@ const userSchema = mongoose.Schema({
         max: 1024,
     },
     followers: {
-        type: [String]
+        type: [String],
     },
     following: {
-        type: [String]
+        type: [String],
     },
     likes: {
-        type: [String]
+        type: [String],
     },
-    favoritePost:
-    {
-        type: [String]
+    favoritePost: {
+        type: [String],
     },
-    savedPost:
-    {
-        type: [String]
+    savedPost: {
+        type: [String],
+    },
+    birthDate: {
+        type: Date,
+    },
+    nationality: {
+        type: String,
+    },
+    homeAddress: {
+        streetNumber: String,
+        streetName: String,
+        city: String,
+        state: String,
+        department: String,
+        region: String,
+        postalCode: String,
+        country: String,
+    },
+    avatar: {
+        type: String,
+        default: null,
+    },
+    gender: {
+        type: String,
+        enum: ['Male', 'Female', 'Other']
+    },
+    preferredLanguage: {
+        type: String,
+    },
+    socialLinks: {
+        twitter: String,
+        linkedin: String,
+        facebook: String,
+        instagram: String,
+        tiktok: String,
+    },
+    interests: {
+        type: [String],
+    },
+    privacySettings: {
+        profileVisibility: {
+            type: String,
+            enum: ['public', 'private', 'friends_only']
+        },
+        postVisibility: {
+            type: String,
+            enum: ['public', 'private', 'friends_only']
+        },
+        messageNotifications: {
+            type: String,
+            enum: ['email', 'push', 'both', 'none']
+        }
+    },
+    onlineStatus: {
+        type: Boolean,
+        default: false,
+    },
+    references: {
+        referralCode: String,
+        referredBy: String,
+    },
+    profession: {
+        company: String,
+        position: String,
     },
     createdAt: {
         type: Date,
-        default: Date.now
-    }
-
+        default: Date.now,
+    },
 },
     {
-        timestamps: true
-    }
-);
+        timestamps: true,
+    });
+
 
 //play function before save into display 
 

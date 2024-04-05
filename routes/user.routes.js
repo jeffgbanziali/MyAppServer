@@ -25,7 +25,7 @@ router.get('/friends/:id', userController.getFriends);
 router.post('/addFavPost', userController.addFavoritePost);
 router.post('/removeFavPost', userController.removeFavoritePost);
 router.post('/savedPost', userController.savedPost);
-router.post('/remSavedPost', userController.removeSavedPost);
+//router.post('/remSavedPost', userController.removeSavedPost);
 
 
 

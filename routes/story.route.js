@@ -24,7 +24,8 @@ router.patch('/dislike-story/:id', storyController.unlikeStory);
 router.patch('/comment-story/:id', storyController.commentStory);
 
 // Voir une histoire
-router.patch('/view-story/:id', storyController.viewStory);
+router.post('/view-story/:containerId/:storyId', storyController.viewStory);
+router.get("/storiesWithViews", storyController.getAllStoriesWithViews);
 
 
 // Supprimer une histoire

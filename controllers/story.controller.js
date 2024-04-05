@@ -270,47 +270,83 @@ module.exports.commentStory = async (req, res) => {
     }
 };
 
-
 module.exports.viewStory = async (req, res) => {
-    if (!ObjectID.isValid(req.params.id))
-        return res.status(400).send("ID unknown : " + req.params.id);
+    const containerId = req.params.containerId;
+    const storyId = req.params.storyId;
+
+    if (!ObjectID.isValid(containerId) || !ObjectID.isValid(storyId))
+        return res.status(400).send("Invalid IDs: " + containerId + ", " + storyId);
 
     try {
-        const story = await StoryModel.findOne({ 'container.stories._id': req.params.id });
+        const story = await StoryModel.findOne({ 'container._id': containerId, 'container.stories._id': storyId });
 
-        if (!story) return res.status(404).send({ message: "Story not found" });
+        if (!story)
+            return res.status(404).send({ message: "Story not found" });
 
         const viewerId = req.body.viewerId;
 
-        if (!story.container.stories[0].views.find((view) => view.viewerId === viewerId)) {
-            story.container.stories[0].views.push({
-                viewerId: viewerId,
-                viewed_at: Date.now(),
-            });
+        // Parcourir chaque histoire dans le container
+        for (let i = 0; i < story.container.stories.length; i++) {
+            const currentStory = story.container.stories[i];
 
-            await story.save();
+            if (currentStory._id.toString() === storyId) {
+                // Vérifier si l'utilisateur a déjà vu cette histoire
+                const hasViewed = currentStory.views.some(view => view.viewerId === viewerId);
+
+                // Si l'utilisateur n'a pas encore vu cette histoire, l'ajouter à la liste des vues
+                if (!hasViewed) {
+                    currentStory.views.push({
+                        viewerId: viewerId,
+                        viewed_at: Date.now(),
+                    });
+                }
+                break; // Sortir de la boucle une fois que l'histoire est trouvée
+            }
         }
+
+        await story.save();
 
         res.send(story);
     } catch (err) {
         return res.status(400).send(err);
     }
-};
+}
 
-// Suppression des histoires après 24 heures
-setInterval(async () => {
-    const currentTime = Date.now();
+
+
+module.exports.getAllStoriesWithViews = async (req, res, next) => {
     try {
-        const storiesToDelete = await StoryModel.find({
-            'container.stories.expires_at': { $lt: currentTime },
-        });
 
-        for (const story of storiesToDelete) {
-            await StoryModel.findByIdAndRemove(story._id);
-        }
-
-        console.log(`${storiesToDelete.length} expired stories cleaned up`);
-    } catch (error) {
-        console.error('Error cleaning up expired stories:', error);
+        const storiesWithViews = await Story.find().populate("container.stories.views.viewerId");
+        res.json(storiesWithViews);
+    } catch (err) {
+        console.error("Error retrieving stories with views:", err);
+        res.status(500).json({ error: "Internal server error" });
     }
-}, 86400000);
+},
+
+
+
+
+    // Supprimer les histoires expirées après 24 heures
+    setInterval(async () => {
+        const currentTime = Date.now();
+        try {
+            // Rechercher les histoires expirées
+            const expiredStories = await StoryModel.find({ 'container.stories.expires_at': { $lt: currentTime } });
+
+            // Supprimer chaque histoire expirée
+            for (const story of expiredStories) {
+                await StoryModel.findOneAndUpdate(
+                    { "container.stories._id": story._id },
+                    { $pull: { "container.stories": { _id: story._id } } },
+                    { new: true }
+                );
+            }
+
+            console.log(`${expiredStories.length} expired stories cleaned up`);
+        } catch (error) {
+            console.error('Error cleaning up expired stories:', error);
+        }
+    }, 86400000); // Exécuter toutes les 24 heures (24 * 60 * 60 * 1000 millisecondes)
+

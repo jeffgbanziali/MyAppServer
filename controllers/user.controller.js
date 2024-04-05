@@ -321,7 +321,7 @@ module.exports.savedPost = async (req, res) => {
   }
 };
 
-module.exports.removeSavedPost = async (req, res) => {
+/*module.exports.removeSavedPost = async (req, res) => {
   const { userId, postId } = req.body;
 
   // Vérifie si les ID sont valides
@@ -332,7 +332,7 @@ module.exports.removeSavedPost = async (req, res) => {
   try {
     // Vérifie si l'utilisateur existe
     const user = await UserModel.findById(userId);
-    if (!user) {
+    if (!user) 
       return res.status(404).send("Utilisateur non trouvé");
     }
 
@@ -344,6 +344,6 @@ module.exports.removeSavedPost = async (req, res) => {
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
-};
+};*/
 
 

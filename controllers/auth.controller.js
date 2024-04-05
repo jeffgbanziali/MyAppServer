@@ -11,18 +11,60 @@ const createToken = (id) => {
 };
 
 module.exports.signUp = async (req, res) => {
-    const { pseudo, firstName, lastName, email, password, confirmPassword, phoneNumber } = req.body
+    const {
+        pseudo,
+        firstName,
+        lastName,
+        email,
+        password,
+        confirmPassword,
+        phoneNumber,
+        birthDate,
+        nationality,
+        homeAddress: {
+            streetNumber,
+            streetName,
+            city,
+            state,
+            department,
+            region,
+            postalCode,
+            country
+        }
+    } = req.body;
 
     try {
-        const user = await UserModel.create({ pseudo, firstName, lastName, email, password, confirmPassword, phoneNumber });
+        const user = await UserModel.create({
+            pseudo,
+            firstName,
+            lastName,
+            email,
+            password,
+            confirmPassword,
+            phoneNumber,
+            birthDate,
+            nationality,
+            homeAddress: {
+                streetNumber,
+                streetName,
+                city,
+                state,
+                department,
+                region,
+                postalCode,
+                country
+            }
+        });
         res.status(201).json({ user: user._id });
         console.log(JSON.stringify(user));
+        console.log("user create ", user)
     }
     catch (err) {
         const errors = signUpErrors(err);
         res.status(400).json({ errors });
     }
 }
+
 
 
 module.exports.signIn = async (req, res) => {
