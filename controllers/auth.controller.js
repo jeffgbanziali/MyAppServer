@@ -83,6 +83,8 @@ module.exports.signIn = async (req, res) => {
     }
 }
 
+
+
 module.exports.logout = (req, res) => {
     res.cookie('jwt', '', { expires: new Date(0), path: '/' });
     res.status(200).json({ message: "logout successful" });

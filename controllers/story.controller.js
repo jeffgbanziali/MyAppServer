@@ -293,8 +293,11 @@ module.exports.viewStory = async (req, res) => {
                 // Vérifier si l'utilisateur a déjà vu cette histoire
                 const hasViewed = currentStory.views.some(view => view.viewerId === viewerId);
 
-                // Si l'utilisateur n'a pas encore vu cette histoire, l'ajouter à la liste des vues
-                if (!hasViewed) {
+                // Vérifier si le viewer n'est pas le même que le posterId du container
+                const isPoster = story.container.posterId === viewerId;
+
+                // Si l'utilisateur n'a pas encore vu cette histoire et n'est pas le poster, l'ajouter à la liste des vues
+                if (!hasViewed && !isPoster) {
                     currentStory.views.push({
                         viewerId: viewerId,
                         viewed_at: Date.now(),
@@ -305,6 +308,8 @@ module.exports.viewStory = async (req, res) => {
         }
 
         await story.save();
+        console.log("Story updated with new view:", story);
+
 
         res.send(story);
     } catch (err) {

@@ -25,6 +25,8 @@ router.patch('/comment-story/:id', storyController.commentStory);
 
 // Voir une histoire
 router.post('/view-story/:containerId/:storyId', storyController.viewStory);
+
+
 router.get("/storiesWithViews", storyController.getAllStoriesWithViews);
 
 
