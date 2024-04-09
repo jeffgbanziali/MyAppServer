@@ -30,7 +30,86 @@ module.exports.readStoriesById = async (req, res) => {
 
 
 
+
 module.exports.createStory = async (req, res) => {
+    try {
+        let media = null;
+        let mediaType = null;
+
+        if (req.body.media) {
+            media = {
+                url: req.body.media.url,
+                duration: req.body.media.duration,
+                fileName: req.body.media.fileName,
+                fileSize: req.body.media.fileSize,
+                height: req.body.media.height,
+                width: req.body.media.width,
+            };
+            mediaType = req.body.media.type; // Correction : assigner le type de média à partir de req.body.media.type
+        }
+
+        // Vérifie si le conteneur existe pour l'utilisateur
+        let existingContainer = await StoryModel.findOne({ 'container.posterId': req.body.posterId });
+
+        // Crée un nouvel objet story en fonction de la présence de text, de média et de type de média
+        const newStory = {
+            text: req.body.text,
+            expires_at: req.body.expires_at,
+        };
+
+        // Ajoute media s'il est présent
+        if (media) {
+            newStory.media = media;
+        }
+
+        // Ajoute media_type s'il est présent
+        if (mediaType) {
+            newStory.media_type = mediaType;
+        }
+
+        // Si le conteneur existe, ajoute cette histoire au tableau 'stories'
+        if (!existingContainer) {
+            existingContainer = new StoryModel({
+                container: {
+                    posterId: req.body.posterId,
+                    stories: [newStory],
+                },
+            });
+            await existingContainer.save();
+            console.log({ message: 'Story created successfully!', story: newStory });
+        } else {
+            // Vérifie si newStory contient la propriété media avant de l'ajouter
+            if (newStory.media) {
+                existingContainer.container.stories.push(newStory);
+            } else {
+                // Générez une erreur ou faites une manipulation appropriée si media est manquant
+                console.error('Error: Media is required for the story.');
+                throw new Error('Media is required for the story.');
+            }
+
+            // Enregistre le conteneur mis à jour dans la base de données
+            await existingContainer.save();
+            console.log({ message: 'Story added to container successfully!', story: newStory });
+        }
+
+
+        res.status(201).json({ message: 'Story added to container successfully' });
+    } catch (err) {
+        console.error('Error during story creation:', err);
+        let errorMessage = 'An error occurred during story creation.';
+        if (err.message) errorMessage = err.message;
+
+        // Supposant que `uploadErrors` est une fonction définie ailleurs dans votre code
+        // et que `res.status(500).json({ errors })` est approprié pour votre application
+        const errors = uploadErrors(errorMessage);
+        res.status(500).json({ errors });
+    }
+};
+
+
+
+
+/*module.exports.createStory = async (req, res) => {
     try {
         let mediaUrl = null;
         let mediaType = null;
@@ -87,7 +166,7 @@ module.exports.createStory = async (req, res) => {
         const errors = uploadErrors(errorMessage);
         res.status(500).json({ errors });
     }
-};
+};*/
 
 
 

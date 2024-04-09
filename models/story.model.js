@@ -15,7 +15,24 @@ const StorySchema = new mongoose.Schema(
             maxlength: 500,
           },
           media: {
-            type: String,
+            url: {
+              type: String,
+            },
+            duration: {
+              type: Number,
+            },
+            fileName: {
+              type: String,
+            },
+            fileSize: {
+              type: Number,
+            },
+            height: {
+              type: Number,
+            },
+            width: {
+              type: Number,
+            },
           },
           media_type: {
             type: String,
