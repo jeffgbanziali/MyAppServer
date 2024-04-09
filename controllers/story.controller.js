@@ -32,6 +32,9 @@ module.exports.readStoriesById = async (req, res) => {
 
 
 module.exports.createStory = async (req, res) => {
+
+
+
     try {
         let media = null;
         let mediaType = null;
@@ -67,6 +70,10 @@ module.exports.createStory = async (req, res) => {
             newStory.media_type = mediaType;
         }
 
+        //newStory.expires_at = new Date(+new Date() + 24 * 60 * 60 * 1000);
+        newStory.expires_at = new Date(+new Date() + 30 * 1000);
+
+
         // Si le conteneur existe, ajoute cette histoire au tableau 'stories'
         if (!existingContainer) {
             existingContainer = new StoryModel({
@@ -77,6 +84,8 @@ module.exports.createStory = async (req, res) => {
             });
             await existingContainer.save();
             console.log({ message: 'Story created successfully!', story: newStory });
+
+
         } else {
             // Vérifie si newStory contient la propriété media avant de l'ajouter
             if (newStory.media) {
@@ -90,7 +99,9 @@ module.exports.createStory = async (req, res) => {
             // Enregistre le conteneur mis à jour dans la base de données
             await existingContainer.save();
             console.log({ message: 'Story added to container successfully!', story: newStory });
+
         }
+
 
 
         res.status(201).json({ message: 'Story added to container successfully' });
@@ -99,8 +110,6 @@ module.exports.createStory = async (req, res) => {
         let errorMessage = 'An error occurred during story creation.';
         if (err.message) errorMessage = err.message;
 
-        // Supposant que `uploadErrors` est une fonction définie ailleurs dans votre code
-        // et que `res.status(500).json({ errors })` est approprié pour votre application
         const errors = uploadErrors(errorMessage);
         res.status(500).json({ errors });
     }
@@ -307,17 +316,25 @@ module.exports.deleteStory = async (req, res) => {
         );
 
         if (container) {
-            res.status(200).json({ message: "Story deleted successfully" });
-            console.log("Deleted successfully:", req.params.id);
+            // Si le conteneur n'a plus d'histoires, supprimez le conteneur entièrement
+            if (container.container.stories.length === 0) {
+                await StoryModel.findByIdAndDelete(container._id);
+                console.log("Container deleted successfully:", container._id);
+                res.status(200).json({ message: "Container deleted successfully" });
+            } else {
+                console.log("Story deleted successfully:", req.params.id);
+                res.status(200).json({ message: "Story deleted successfully" });
+            }
         } else {
-            console.log("Delete error: Container not found");
-            res.status(404).json({ message: "Container not found" });
+            console.log("Delete error: Story not found");
+            res.status(404).json({ message: "Story not found" });
         }
     } catch (err) {
         console.log("Delete error:", err);
         res.status(500).json(err);
     }
 };
+
 
 
 module.exports.commentStory = async (req, res) => {
@@ -348,6 +365,9 @@ module.exports.commentStory = async (req, res) => {
         return res.status(500).send({ message: err });
     }
 };
+
+
+
 
 module.exports.viewStory = async (req, res) => {
     const containerId = req.params.containerId;
@@ -407,30 +427,48 @@ module.exports.getAllStoriesWithViews = async (req, res, next) => {
         console.error("Error retrieving stories with views:", err);
         res.status(500).json({ error: "Internal server error" });
     }
-},
+}
 
 
 
 
-    // Supprimer les histoires expirées après 24 heures
-    setInterval(async () => {
-        const currentTime = Date.now();
-        try {
-            // Rechercher les histoires expirées
-            const expiredStories = await StoryModel.find({ 'container.stories.expires_at': { $lt: currentTime } });
+//fonction pour la suppresion automatique d'une story après 24h 
+async function cleanUpExpiredStories() {
+    const currentTime = Date.now();
+    console.log("C'est toi le currentTime", currentTime);
+    try {
+        // Rechercher  les histoires expirées
+        const expiredStories = await StoryModel.find({ 'container.stories.expires_at': { $lte: currentTime } });
 
-            // Supprimer chaque histoire expirée
-            for (const story of expiredStories) {
+
+        for (const story of expiredStories) {
+
+
+            const myId = story._id.toString()
+
+            const container = story.container;
+            let updatedStories = container.stories.filter(story => story.expires_at = currentTime);
+
+            if (updatedStories.length === 0) {
+                // Si le conteneur ne contient plus aucune histoire, le supprimer
+                await StoryModel.findByIdAndDelete(myId);
+                console.log(`Container deleted for posterId: ${container.posterId}`);
+            } else {
+                // Mettre à jour le conteneur avec les histoires non expirées
                 await StoryModel.findOneAndUpdate(
-                    { "container.stories._id": story._id },
-                    { $pull: { "container.stories": { _id: story._id } } },
-                    { new: true }
+                    { _id: story._id },
+                    { $set: { 'container.stories': updatedStories } }
                 );
+                const deletedStoriesCount = container.stories.length - updatedStories.length;
+                console.log(`${deletedStoriesCount} expired stories cleaned up for posterId: ${container.posterId}`);
             }
-
-            console.log(`${expiredStories.length} expired stories cleaned up`);
-        } catch (error) {
-            console.error('Error cleaning up expired stories:', error);
         }
-    }, 86400000); // Exécuter toutes les 24 heures (24 * 60 * 60 * 1000 millisecondes)
+
+        console.log(`${expiredStories.length} expired stories cleaned up`);
+    } catch (error) {
+        console.error('Error cleaning up expired stories:', error);
+    }
+}
+
+setInterval(cleanUpExpiredStories, 86400000);
 
