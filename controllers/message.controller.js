@@ -6,7 +6,7 @@ module.exports.sendMessage = async (req, res) => {
 
   let newMessage;
 
-  // Check if the message contains both text and an image
+  // Crée le nouveau message en fonction des données reçues
   if (text && attachment && attachment.type === "image") {
     newMessage = new MessageModel({
       senderId,
@@ -17,9 +17,7 @@ module.exports.sendMessage = async (req, res) => {
         url: attachment.url,
       },
     });
-  }
-  // Check if the message contains both text and a document
-  else if (text && attachment && attachment.type === "document") {
+  } else if (text && attachment && attachment.type === "document") {
     newMessage = new MessageModel({
       senderId,
       conversationId,
@@ -29,17 +27,13 @@ module.exports.sendMessage = async (req, res) => {
         url: attachment.url,
       },
     });
-  }
-  // Check if the message contains only text
-  else if (text) {
+  } else if (text) {
     newMessage = new MessageModel({
       senderId,
       conversationId,
       text,
     });
-  }
-  // Check if the message contains only an image
-  else if (attachment && attachment.type === "image") {
+  } else if (attachment && attachment.type === "image") {
     newMessage = new MessageModel({
       senderId,
       conversationId,
@@ -48,9 +42,7 @@ module.exports.sendMessage = async (req, res) => {
         url: attachment.url,
       },
     });
-  }
-  // Check if the message contains only a document
-  else if (attachment && attachment.type === "document") {
+  } else if (attachment && attachment.type === "document") {
     newMessage = new MessageModel({
       senderId,
       conversationId,
@@ -63,7 +55,16 @@ module.exports.sendMessage = async (req, res) => {
 
   try {
     if (newMessage) {
+      // Enregistre le nouveau message dans la base de données
       const savedMessage = await newMessage.save();
+
+      // Met à jour le champ 'message' dans le modèle de conversation avec le texte du nouveau message
+      await conversationModel.findByIdAndUpdate(
+        conversationId,
+        { message: text }, // Met à jour le champ 'message' avec le texte du nouveau message
+        { new: true } // Renvoie le document mis à jour après la mise à jour
+      );
+
       res.status(200).json(savedMessage);
     } else {
       res.status(400).json({ error: "Invalid message format" });
@@ -72,6 +73,7 @@ module.exports.sendMessage = async (req, res) => {
     res.status(500).json(err);
   }
 };
+
 
 
 module.exports.readMessage = async (req, res) => {
