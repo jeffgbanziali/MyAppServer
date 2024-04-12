@@ -17,11 +17,15 @@ module.exports.createConversation = async (req, res) => {
 
   try {
     const savedConversation = await newConversation.save();
+    console.log("Create new conversation", savedConversation)
     res.status(200).json(savedConversation);
   } catch (error) {
     res.status(500).json(error);
   }
 };
+
+
+
 
 module.exports.readConversation = async (req, res) => {
   try {

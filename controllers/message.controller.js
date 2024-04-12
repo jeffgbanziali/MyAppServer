@@ -17,7 +17,11 @@ module.exports.sendMessage = async (req, res) => {
         url: attachment.url,
       },
     });
-  } else if (text && attachment && attachment.type === "document") {
+
+
+  }
+
+  else if (text && attachment && attachment.type === "document") {
     newMessage = new MessageModel({
       senderId,
       conversationId,
@@ -27,13 +31,18 @@ module.exports.sendMessage = async (req, res) => {
         url: attachment.url,
       },
     });
-  } else if (text) {
+  }
+  else if (text) {
     newMessage = new MessageModel({
       senderId,
       conversationId,
       text,
     });
-  } else if (attachment && attachment.type === "image") {
+
+
+  }
+
+  else if (attachment && attachment.type === "image") {
     newMessage = new MessageModel({
       senderId,
       conversationId,
@@ -42,7 +51,9 @@ module.exports.sendMessage = async (req, res) => {
         url: attachment.url,
       },
     });
-  } else if (attachment && attachment.type === "document") {
+  }
+
+  else if (attachment && attachment.type === "document") {
     newMessage = new MessageModel({
       senderId,
       conversationId,
