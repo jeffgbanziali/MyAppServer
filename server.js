@@ -36,20 +36,21 @@ let users = [];
 
 const addUser = (id, socketId) => {
   !users.some((user) => user.id === id) &&
-    users.push({ id, socketId });
+    users.push({ id, socketId, online: true });
   console.log("Users after adding:", users);
 };
 
 const removeUser = (socketId) => {
-  users = users.filter((user) => user.socketId !== socketId);
+  users = users.map(user =>
+    user.socketId === socketId ? { ...user, online: false } : user
+  );
   console.log("Users after removing:", users);
 };
 
 const getUser = (id) => {
   console.log("Affiche toi :", id);
   const user = users.find((user) => user.id === id);
-  console.log("User trouvé :", user);
-  console.log("Users :", users);
+
   return user;
 };
 
