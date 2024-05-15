@@ -4,7 +4,11 @@ module.exports.createConversation = async (req, res) => {
   let senderId = req.body.senderId;
   let receiverId = req.body.receiverId;
 
-  const exist = await ConversationModel.findOne({ members: { $all: [receiverId, senderId] } });
+  // Correction de la requête pour vérifier l'existence de la conversation
+  const exist = await ConversationModel.findOne({
+    members: { $all: [receiverId, senderId] },
+    message: ""
+  });
 
   if (exist) {
     res.status(200).json('Conversation already exists');
@@ -12,17 +16,19 @@ module.exports.createConversation = async (req, res) => {
   }
 
   const newConversation = new ConversationModel({
-    members: [senderId, receiverId]
+    members: [senderId, receiverId],
+    message: "",
   });
 
   try {
     const savedConversation = await newConversation.save();
-    console.log("Create new conversation", savedConversation)
+    console.log("Create new conversation", savedConversation);
     res.status(200).json(savedConversation);
   } catch (error) {
     res.status(500).json(error);
   }
 };
+
 
 
 

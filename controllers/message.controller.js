@@ -17,11 +17,7 @@ module.exports.sendMessage = async (req, res) => {
         url: attachment.url,
       },
     });
-
-
-  }
-
-  else if (text && attachment && attachment.type === "document") {
+  } else if (text && attachment && attachment.type === "document") {
     newMessage = new MessageModel({
       senderId,
       conversationId,
@@ -31,18 +27,13 @@ module.exports.sendMessage = async (req, res) => {
         url: attachment.url,
       },
     });
-  }
-  else if (text) {
+  } else if (text) {
     newMessage = new MessageModel({
       senderId,
       conversationId,
       text,
     });
-
-
-  }
-
-  else if (attachment && attachment.type === "image") {
+  } else if (attachment && attachment.type === "image") {
     newMessage = new MessageModel({
       senderId,
       conversationId,
@@ -51,9 +42,7 @@ module.exports.sendMessage = async (req, res) => {
         url: attachment.url,
       },
     });
-  }
-
-  else if (attachment && attachment.type === "document") {
+  } else if (attachment && attachment.type === "document") {
     newMessage = new MessageModel({
       senderId,
       conversationId,
@@ -69,14 +58,27 @@ module.exports.sendMessage = async (req, res) => {
       // Enregistre le nouveau message dans la base de données
       const savedMessage = await newMessage.save();
 
+      // Vérifie si c'est le premier message de la conversation
+      const conversation = await conversationModel.findById(conversationId);
+      if (conversation && (!conversation.message || conversation.message.length === 0)) {
+        // Si c'est le premier message, met à jour le champ 'firstMessage' de la conversation
+        await conversationModel.findByIdAndUpdate(
+          conversationId,
+          { message: text },
+          { new: true }
+        );
+        console.log("Create new message", savedMessage)
+      }
+
       // Met à jour le champ 'message' dans le modèle de conversation avec le texte du nouveau message
       await conversationModel.findByIdAndUpdate(
         conversationId,
-        { message: text }, // Met à jour le champ 'message' avec le texte du nouveau message
-        { new: true } // Renvoie le document mis à jour après la mise à jour
+        { message: text },
+        { new: true }
       );
 
       res.status(200).json(savedMessage);
+
     } else {
       res.status(400).json({ error: "Invalid message format" });
     }
@@ -84,6 +86,7 @@ module.exports.sendMessage = async (req, res) => {
     res.status(500).json(err);
   }
 };
+
 
 
 
