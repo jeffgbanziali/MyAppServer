@@ -2,7 +2,7 @@ const conversationModel = require("../models/conversation.model");
 const MessageModel = require("../models/message.model");
 
 module.exports.sendMessage = async (req, res) => {
-  const { senderId, conversationId, text, attachment } = req.body;
+  const { senderId, receiverId, conversationId, text, attachment } = req.body;
 
   let newMessage;
 
@@ -10,6 +10,7 @@ module.exports.sendMessage = async (req, res) => {
   if (text && attachment && attachment.type === "image") {
     newMessage = new MessageModel({
       senderId,
+      receiverId,
       conversationId,
       text,
       attachment: {
@@ -20,6 +21,7 @@ module.exports.sendMessage = async (req, res) => {
   } else if (text && attachment && attachment.type === "document") {
     newMessage = new MessageModel({
       senderId,
+      receiverId,
       conversationId,
       text,
       attachment: {
@@ -30,12 +32,14 @@ module.exports.sendMessage = async (req, res) => {
   } else if (text) {
     newMessage = new MessageModel({
       senderId,
+      receiverId,
       conversationId,
       text,
     });
   } else if (attachment && attachment.type === "image") {
     newMessage = new MessageModel({
       senderId,
+      receiverId,
       conversationId,
       attachment: {
         type: "image",
@@ -45,6 +49,7 @@ module.exports.sendMessage = async (req, res) => {
   } else if (attachment && attachment.type === "document") {
     newMessage = new MessageModel({
       senderId,
+      receiverId,
       conversationId,
       attachment: {
         type: "document",
@@ -60,34 +65,72 @@ module.exports.sendMessage = async (req, res) => {
 
       // Vérifie si c'est le premier message de la conversation
       const conversation = await conversationModel.findById(conversationId);
-      if (conversation && (!conversation.message || conversation.message.length === 0)) {
-        // Si c'est le premier message, met à jour le champ 'firstMessage' de la conversation
-        await conversationModel.findByIdAndUpdate(
-          conversationId,
-          { message: text },
-          { new: true }
-        );
-        console.log("Create new message", savedMessage)
+      let updateData = {};
+
+      if (!conversation.message || !conversation.message.text || conversation.message.text.length === 0) {
+        // Si c'est le premier message, met à jour les membres de la conversation et le message
+        updateData = {
+          members: {
+            senderId: senderId,
+            receiverId: receiverId
+          },
+          message: {
+            text: text,
+            isRead: false
+          }
+        };
+      } else {
+        // Si ce n'est pas le premier message, met à jour seulement le message et les membres
+        updateData = {
+          $set: {
+            "members.senderId": senderId,
+            "members.receiverId": receiverId,
+            "message.text": text,
+            "message.isRead": false
+          }
+        };
       }
 
-      // Met à jour le champ 'message' dans le modèle de conversation avec le texte du nouveau message
+      // Mettre à jour la conversation avec les données de mise à jour
       await conversationModel.findByIdAndUpdate(
         conversationId,
-        { message: text },
+        updateData,
         { new: true }
       );
 
       res.status(200).json(savedMessage);
-
+      console.log("Enregistre toi", savedMessage)
     } else {
       res.status(400).json({ error: "Invalid message format" });
     }
   } catch (err) {
     res.status(500).json(err);
   }
+
 };
 
 
+module.exports.markMessagesAsRead = async (req, res) => {
+  const { conversationId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    await MessageModel.updateMany(
+      {
+        conversationId: conversationId,
+        receiverId: userId,
+        isRead: false
+      },
+      {
+        $set: { isRead: true }
+      }
+    );
+    res.status(200).json({ message: "Messages marked as read" });
+  } catch (error) {
+    console.error('Error marking messages as read:', error);
+    res.status(500).json({ error: "Error marking messages as read" });
+  }
+};
 
 
 module.exports.readMessage = async (req, res) => {

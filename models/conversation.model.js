@@ -2,19 +2,31 @@ const mongoose = require('mongoose');
 
 const ConversationSchema = new mongoose.Schema({
     members: {
-        type: Array
+        senderId: {
+            type: String,
+            required: true
+        },
+        receiverId: {
+            type: String,
+            required: true
+        }
     },
     message: {
-        type: String
+        text: {
+            type: String,
+            //required: true
+        },
+        isRead: {
+            type: Boolean,
+            default: false
+        }
     },
-
     createdAt: {
         type: Date,
-        default: Date.now,
-    },
-},
-    {
-        timestamps: true
+        default: Date.now
     }
-);
+}, {
+    timestamps: true
+});
+
 module.exports = mongoose.model('Conversation', ConversationSchema);
