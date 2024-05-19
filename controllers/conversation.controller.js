@@ -75,7 +75,7 @@ module.exports.markConversationAsRead = async (req, res) => {
 
     conversation.message.isRead = true;
     const conversationsSaved = await conversation.save();
-    console.log("Conversation marked as read", conversationsSaved);
+   // console.log("Conversation marked as read", conversationsSaved);
 
     return res.status(200).json({ message: "Conversation marked as read" });
   } catch (error) {

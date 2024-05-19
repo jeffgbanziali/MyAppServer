@@ -99,7 +99,7 @@ module.exports.sendMessage = async (req, res) => {
       );
 
       res.status(200).json(savedMessage);
-      console.log("Enregistre toi", savedMessage)
+      //console.log("Enregistre toi", savedMessage)
     } else {
       res.status(400).json({ error: "Invalid message format" });
     }

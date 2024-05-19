@@ -2,6 +2,8 @@ const express = require("express");
 require("dotenv").config({ path: "./config/.env" });
 require("./config/db");
 const bodyParser = require("body-parser");
+
+const { Server } = require("socket.io")
 const cookieParser = require("cookie-parser");
 const userRoutes = require("./routes/user.routes");
 const postRoutes = require("./routes/post.routes");
@@ -12,6 +14,8 @@ const messageRoutes = require("./routes/message.route");
 const { checkUser, requireAuth } = require("./middleware/auth.middleware");
 const cors = require("cors");
 const http = require("http");
+
+const chatSocket = require("./socketServer/socket")
 
 const app = express();
 
@@ -26,74 +30,14 @@ const corsOptions = {
 
 //socket.io
 //socket.io
-const io = require("socket.io")(8900, {
+const io = new Server(8900, {
   cors: {
     origin: "http://192.168.0.14:3000",
   },
 });
 
-let users = [];
 
-const addUser = (id, socketId) => {
-  !users.some((user) => user.id === id) &&
-    users.push({ id, socketId, online: true });
-  console.log("Users after adding:", users);
-};
-
-const removeUser = (socketId) => {
-  users = users.map(user =>
-    user.socketId === socketId ? { ...user, online: false } : user
-  );
-  console.log("Users after removing:", users);
-};
-
-const getUser = (id) => {
-  console.log("Affiche toi :", id);
-  const user = users.find((user) => user.id === id);
-
-  return user;
-};
-
-io.on("connection", (socket) => {
-  //when ceonnect
-  console.log("Utilisateur  connecté !!!!",);
-
-  //take userId and socketId from user
-  socket.on("addUser", (id) => {
-    console.log("User added:", id, socket.id);
-    addUser(id, socket.id);
-    io.emit("getUsers", users);
-  });
-
-  //send and get message
-  socket.on("sendMessage", ({ senderId, receiverId, text, attachment }) => {
-    console.log("Affiche toi :", receiverId);
-    const user = getUser(receiverId);
-
-    console.log("User:", user);
-    if (user && user.socketId) {
-      io.to(user.socketId).emit("getMessage", {
-        senderId,
-        text,
-        attachment,
-      });
-    } else {
-      console.log("Utilisateur non trouvé ou socketId non défini.");
-    }
-  });
-
-
-
-
-  //when disconnect
-  socket.on("disconnect", () => {
-    console.log("Utilisateur déconnecté !!!!");
-    removeUser(socket.id);
-    io.emit("getUsers", users);
-    console.log("Users after disconnect:", users);
-  });
-});
-
+chatSocket(io)
 //middleware
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
