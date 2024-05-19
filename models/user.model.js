@@ -172,9 +172,20 @@ userSchema.methods.updatePassword = async function (oldPassword, newPassword) {
 }
 
 
+
+
 userSchema.statics.setOnlineStatus = async function (userId, status) {
-    await this.updateOne({ _id: userId }, { $set: { onlineStatus: status } });
+    try {
+        const result = await this.updateOne({ _id: userId }, { $set: { onlineStatus: status } });
+        console.log(`User ID: ${userId} - Status set to: ${status}`);
+        console.log('Update result:', result);
+    } catch (error) {
+        console.error(`Error setting online status for user ID: ${userId}`, error);
+    }
 };
+
+
+
 
 const UserModel = mongoose.model("user", userSchema);
 
