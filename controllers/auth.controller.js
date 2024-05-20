@@ -38,22 +38,39 @@ const sendVerificationEmail = (user) => {
         },
         to: [user.email],
         subject: 'Email de vérification',
-        html: `<body style="font-family: Arial, sans-serif;">
-
-        <div style="max-width: 600px; margin: 0 auto;">
-            <div style="text-align: center;">
-                <img src="../uploads//email/1.png" alt="Logo Flajoo" style="max-width: 150px;">
+        html: `<!DOCTYPE html>
+        <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Confirmation d'inscription - Flajoo</title>
+        </head>
+        <body style="font-family: Arial, sans-serif;">
+        
+            <div style="max-width: 600px; margin: 0 auto;">
+                <div style="text-align: center;">
+                    <img src="../uploads/email/2.png" alt="Logo Flajoo" style="max-width: 150px;">
+                </div>
+                <h2 style="text-align: center; color: #333;">Bienvenue, ${user.firstName} ${user.lastName} !</h2>
+                <p style="text-align: justify;">Nous sommes ravis de vous accueillir sur Flajoo, la plateforme où les achats deviennent un plaisir.</p>
+                <p style="text-align: justify;">Pour compléter votre inscription, veuillez saisir le code de vérification à 6 chiffres ci-dessous :</p>
+                <div style="text-align: center;">
+                    <h3 style="font-size: 24px; margin-bottom: 20px;">Code de vérification : <span style="color: #007bff;">${verificationCode}</span></h3>
+                    <p style="font-size: 14px; color: #888;">Ce code de vérification expirera dans 10 minutes.</p>
+                </div>
+                <p style="text-align: justify;">Si vous n'avez pas demandé ce code, veuillez ignorer cet e-mail.</p>
+                <p style="text-align: left;font-size: 14px;">Cordialement,<br><br>L'équipe Flajoo</p>
+                <p style="text-align: left;font-size: 12px;">30-32 Avenue de la République<br>Villejuif, Val-de-Marne<br>Île-de-France, France</p>
+                <ul style="list-style-type: none;font-size: 12px; padding-left: 0;">
+                    <li>Tel : + 33 6 05 57 28 02</li>
+                    <li>Email : <a href="mailto:contact@flajoo.com" style="color: #007bff; text-decoration: none;">contact@flajoo.com</a></li>
+                </ul>
+                
+            
             </div>
-            <h2 style="text-align: center; color: #333;">Bienvenue, ${user.firstName} ${user.lastName} !</h2>
-            <p style="text-align: justify;">Merci de vous être inscrit sur notre plateforme. Pour finaliser votre inscription, veuillez saisir le code de vérification à 6 chiffres ci-dessous :</p>
-            <div style="text-align: center;">
-                <h3 style="font-size: 24px; margin-bottom: 20px;">Code de vérification : <span style="color: #007bff;">${verificationCode}</span></h3>
-                <p style="font-size: 14px; color: #888;">Ce code de vérification expirera dans 10 minutes.</p>
-            </div>
-            <p style="text-align: justify;">Si vous n'avez pas demandé ce code, veuillez ignorer cet e-mail.</p>
-            <p style="text-align: justify;">Merci de nous avoir rejoints ! Si vous avez des questions, n'hésitez pas à nous contacter.</p>
-            <p style="text-align: center;">Cordialement,<br>L'équipe Flajoo</p>
-        </div>
+        
+        </body>
+        </html>
     `
     };
 
