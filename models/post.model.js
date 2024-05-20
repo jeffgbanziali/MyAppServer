@@ -15,6 +15,21 @@ const PostSchema = new mongoose.Schema(
             mediaUrl: {
                 type: String,
             },
+            duration: {
+                type: Number,
+            },
+            fileName: {
+                type: String,
+            },
+            fileSize: {
+                type: Number,
+            },
+            height: {
+                type: Number,
+            },
+            width: {
+                type: Number,
+            },
             mediaType: {
                 type: String,
                 enum: ['video', 'image', 'audio', 'gif'],

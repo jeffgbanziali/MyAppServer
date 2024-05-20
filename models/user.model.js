@@ -119,6 +119,14 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    verificationCode: {
+        type: String, // Stocker le code de vérification à 6 chiffres
+        default: null,
+    },
+    isVerified: {
+        type: Boolean, // Indiquer si le compte de l'utilisateur est vérifié ou non
+        default: false,
+    },
     references: {
         referralCode: String,
         referredBy: String,

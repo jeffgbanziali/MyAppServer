@@ -98,6 +98,11 @@ module.exports.createPost = async (req, res) => {
             media = req.body.media.map(item => ({
                 mediaUrl: item.mediaUrl,
                 mediaType: item.mediaType,
+                duration: item.duration,
+                fileName: item.fileName,
+                fileSize: item.fileSize,
+                height: item.height,
+                width: item.width,
             }));
         }
 

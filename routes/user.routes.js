@@ -9,6 +9,8 @@ const authMiddleware = require('../middleware/auth.middleware');
 router.post("/register", authController.signUp);
 router.post("/login", authController.signIn);
 router.get("/logout", authController.logout);
+router.post('/verify-account', authController.verifyAccount);
+
 //router.post('/change-password/:id', authMiddleware.requireAuth, authController.changePassword);
 
 
