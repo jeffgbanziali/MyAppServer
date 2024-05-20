@@ -20,10 +20,10 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         type: 'OAuth2',
-        user: 'gbazialij@gmail.com',
-        clientId: '210714148369-far5ooe0nonehu8k8c058skhlkrm33u1.apps.googleusercontent.com',
-        clientSecret: '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',
-        refreshToken: '1//04kaH3qvkV2_DCgYIARAAGAQSNwF-L9IrJcG4oIPIXZVQfCWr7D64_s93bAogNwBGez47PyuwpK1mSh4WSrgJeBAr27CQhLlGh_o',
+        user: process.env.EMAIL_USER,
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        refreshToken: process.env.REFRESH_TOKEN,
         //accessToken: 'your-access-token' // facultatif, mais peut être utilisé
     }
 });
@@ -31,8 +31,6 @@ const transporter = nodemailer.createTransport({
 const verificationCode = generateVerificationCode();
 
 const sendVerificationEmail = (user) => {
-
-    // const verificationUrl = `https://developers.google.com/oauthplayground`;
 
     const mailOptions = {
         from: {
