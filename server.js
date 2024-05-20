@@ -2,9 +2,11 @@ const express = require("express");
 require("dotenv").config({ path: "./config/.env" });
 require("./config/db");
 const bodyParser = require("body-parser");
-
-const { Server } = require("socket.io")
+const passport = require('passport');
+const passportSetup = require('./config/passport');
+const { Server } = require("socket.io");
 const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
 const userRoutes = require("./routes/user.routes");
 const postRoutes = require("./routes/post.routes");
 const storyRoutes = require("./routes/story.route");
@@ -15,7 +17,7 @@ const { checkUser, requireAuth } = require("./middleware/auth.middleware");
 const cors = require("cors");
 const http = require("http");
 
-const chatSocket = require("./socketServer/socket")
+const chatSocket = require("./socketServer/socket");
 
 const app = express();
 
@@ -29,18 +31,26 @@ const corsOptions = {
 };
 
 //socket.io
-//socket.io
 const io = new Server(8900, {
   cors: {
     origin: "http://192.168.0.14:3000",
   },
 });
 
+chatSocket(io);
 
-chatSocket(io)
 //middleware
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
+app.use(cookieSession({
+  name: "session",
+  keys: ["cyberwolve"],
+  maxAge: 24 * 60 * 60 * 100
+}));
+
+// Utilisez passportSetup pour initialiser Passport.js
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -53,7 +63,6 @@ app.get("/jwtid", requireAuth, (req, res) => {
 });
 
 //routes
-
 app.use("/api/user", userRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/stories", storyRoutes);
@@ -62,7 +71,6 @@ app.use("/api/message", messageRoutes);
 app.use("/api/videoReels", videoRéelsRoutes);
 
 //myAppServer
-
 const server = http.createServer(app);
 server.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

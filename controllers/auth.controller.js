@@ -2,7 +2,7 @@ const UserModel = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const { signUpErrors, signInErrors } = require('../utils/errors.utils');
 const nodemailer = require('nodemailer');
-
+const passport = require("passport")
 const maxAge = 3 * 24 * 60 * 60; // 3 jours en secondes
 
 const createToken = (id) => {
@@ -94,27 +94,27 @@ exports.verifyAccount = async (req, res) => {
         const user = await UserModel.findOne({ email });
 
         if (!user) {
-            return res.status(404).json({ error: 'Utilisateur non trouvé' });
+            return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
         }
 
         // Vérifiez si le code de vérification soumis correspond au code envoyé par e-mail
         if (user.verificationCode !== verificationCode) {
-            return res.status(400).json({ error: 'Code de vérification incorrect' });
+            return res.status(400).json({ success: false, message: 'Code de vérification incorrect' });
         }
 
         // Marquez l'utilisateur comme vérifié
         user.isVerified = true;
         // Réinitialisez le code de vérification (optionnel)
-        //user.verificationCode = null;
+       // user.verificationCode = null;
         await user.save();
 
-        res.status(200).json({ message: 'Compte vérifié avec succès' });
-        res.status(200).json({ user: 'Compte vérifié avec succès' });
+        res.status(200).json({ success: true, message: 'Compte vérifié avec succès' });
     } catch (error) {
         console.error('Erreur lors de la vérification du compte :', error);
-        res.status(500).json({ error: 'Erreur interne du serveur' });
+        res.status(500).json({ success: false, message: 'Erreur interne du serveur' });
     }
 };
+
 
 
 
@@ -169,13 +169,15 @@ module.exports.signUp = async (req, res) => {
         // Envoyer l'email de vérification
         sendVerificationEmail(user);
 
-        res.status(201).json({ user: user._id });
+        res.status(201).json({ user: user._id, userData: user });
         console.log("Utilisateur créé : ", user);
     } catch (err) {
         const errors = signUpErrors(err);
         res.status(400).json({ errors });
     }
 };
+
+
 
 
 module.exports.signIn = async (req, res) => {
@@ -216,4 +218,24 @@ module.exports.changePassword = async (req, res) => {
         console.error("Erreur lors de la mise à jour du mot de passe :", error);
         res.status(500).json({ error: "Erreur interne du serveur" });
     }
+};
+
+
+module.exports.googleLogin = passport.authenticate('google', { scope: ['profile', 'email'] });
+
+// Callback de connexion avec Google
+module.exports.googleCallback = (req, res) => {
+    passport.authenticate('google', async (err, user, info) => {
+        if (err) {
+            console.error('Erreur lors de la connexion avec Google :', err);
+            return res.status(500).json({ error: 'Erreur interne du serveur' });
+        }
+        if (!user) {
+            return res.status(401).json({ error: 'Authentification Google échouée' });
+        }
+        // Générer le jeton JWT
+        const token = createToken(user._id);
+        // Vous pouvez également rediriger ou effectuer d'autres actions nécessaires ici
+        res.status(200).json({ token });
+    })(req, res);
 };
