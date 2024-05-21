@@ -285,8 +285,8 @@ module.exports.googleSignIn = async (req, res) => {
                 firstName: googlePayload.given_name,
                 lastName: googlePayload.family_name,
                 email: googlePayload.email,
-                googleId: googlePayload.sub,
                 password: randomPassword,
+                googleId: googlePayload.sub,
                 confirmPassword: randomPassword,
                 verificationCode: verificationCode
             });
@@ -311,16 +311,19 @@ module.exports.googleSignIn = async (req, res) => {
                     console.log('Email envoyé : ' + info.response);
                 }
             });
+
+            const token = createToken(user._id);
+            console.log(token);
+            res.cookie('jwt', token, { httpOnly: true, maxAge });
+            res.status(201).json({ userData: user }); // Envoyer la réponse ici
         } else {
             const token = createToken(user._id);
             console.log(token);
             res.cookie('jwt', token, { httpOnly: true, maxAge });
-            res.status(200).json({ user: user._id })
+            res.status(200).json({ user: user._id }); // Envoyer la réponse ici
         }
-
-        res.status(201).json({ userData: user });
     } catch (error) {
         console.error('Erreur lors de l\'authentification Google :', error);
-        res.status(500).json({ error: 'Erreur interne du serveur' });
+        res.status(500).json({ error: 'Erreur interne du serveur' }); // Envoyer la réponse ici en cas d'erreur
     }
 };

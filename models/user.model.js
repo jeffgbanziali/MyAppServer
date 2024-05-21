@@ -152,37 +152,36 @@ const userSchema = mongoose.Schema({
 
 //play function before save into display 
 
-/*userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
     const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(this.password, salt);
     this.confirmPassword = await bcrypt.hash(this.confirmPassword, salt);
     next();
-});*/
-//static method to login userxx
-userSchema.statics.login = async function (email, password) {
+});
+
+
+//static method to login user
+userSchema.statics.login = async function (email, password,) {
     const user = await this.findOne({ email });
+    console.log("User es là ", user)
 
     if (user) {
-        const auth = await bcrypt.compare(password, user.password);
-        console.log("Résultat de bcrypt.compare:", user.password);
-        console.log("est ce que c'est vrai? ", password)
-        const comparePasswords = async (password, hashedPassword) => {
-            return await bcrypt.compare(password, hashedPassword);
-        };
-
-        // Utilisation de la fonction pour comparer le mot de passe fourni avec celui stocké dans la base de données
-        const isPasswordCorrect = await comparePasswords(password, user.password);
-        console.log("Viesn me voir", isPasswordCorrect)
-
-
-        if (auth) {
+        if (user.googleId) {
+            // Vérifier si l'utilisateur a été créé via Google SignIn
             return user;
+        } else {
+            // Comparaison des mots de passe pour les utilisateurs traditionnels
+            const auth = await bcrypt.compare(password, user.password);
+            if (auth) {
+                return user;
+            }
         }
-        throw Error('incorrect password')
     }
-    throw Error('incorrect email')
-}
+    throw Error('incorrect email or password');
+};
+
+
 
 
 userSchema.methods.updatePassword = async function (oldPassword, newPassword) {
