@@ -6,11 +6,15 @@ passport.use(
         {
             clientID: process.env.CLIENT_ID_GOOGLE_AUTH,
             clientSecret: process.env.CLIENT_SECRET_GOOGLE_AUTH,
-            callbackURL: "/auth/google/callback",
-            scope: ["profile", "email"],
+            callbackURL: "http://localhost:4000/api/authentication/auth/google/callback",
+            passReqToCallback: true
         },
         function (accessToken, refreshToken, profile, callback) {
-            callback(null, profile);
+            // Utiliser un modèle utilisateur pour vérifier et sauvegarder l'utilisateur
+            // User.findOrCreate({ googleId: profile.id }, function (err, user) {
+            //     return callback(err, user);
+            // });
+            return callback(null, profile); // Simplifié pour le test
         }
     )
 );

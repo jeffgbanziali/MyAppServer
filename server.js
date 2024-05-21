@@ -38,6 +38,7 @@ const io = new Server(8900, {
 });
 
 chatSocket(io);
+app.set('view engine', 'ejs');
 
 //middleware
 app.use(cors(corsOptions));

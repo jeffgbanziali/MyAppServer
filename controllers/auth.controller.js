@@ -2,13 +2,17 @@ const UserModel = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const { signUpErrors, signInErrors } = require('../utils/errors.utils');
 const nodemailer = require('nodemailer');
-const passport = require("passport")
-const maxAge = 3 * 24 * 60 * 60; // 3 jours en secondes
+const { OAuth2Client } = require('google-auth-library');
+
+
+
+
+const maxAge = 3 * 24 * 60 * 60 * 1000;
 
 const createToken = (id) => {
     return jwt.sign({ id }, process.env.TOKEN_SECRET, {
         expiresIn: maxAge
-    });
+    })
 };
 const generateVerificationCode = () => {
     const min = 100000; // Le plus petit nombre à 6 chiffres
@@ -29,12 +33,12 @@ const transporter = nodemailer.createTransport({
 
 const verificationCode = generateVerificationCode();
 
-const sendVerificationEmail = (user) => {
 
+const sendVerificationEmail = (user, verificationCode) => {
     const mailOptions = {
         from: {
             name: "Flajoo",
-            addres: process.env.EMAIL_USER,
+            address: process.env.EMAIL_USER,
         },
         to: [user.email],
         subject: 'Email de vérification',
@@ -45,33 +49,41 @@ const sendVerificationEmail = (user) => {
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Confirmation d'inscription - Flajoo</title>
         </head>
-        <body style="font-family: Arial, sans-serif;">
+        <body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;">
         
-            <div style="max-width: 600px; margin: 0 auto;">
-                <div style="text-align: center;">
-                    <img src="../uploads/email/2.png" alt="Logo Flajoo" style="max-width: 150px;">
+            <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                <div style="text-align: center; padding: 20px;">
+                    <img src="cid:logo" alt="Logo Flajoo" style="max-width: 150px;">
                 </div>
-                <h2 style="text-align: center; color: #333;">Bienvenue, ${user.firstName} ${user.lastName} !</h2>
-                <p style="text-align: justify;">Nous sommes ravis de vous accueillir sur Flajoo, la plateforme où les achats deviennent un plaisir.</p>
-                <p style="text-align: justify;">Pour compléter votre inscription, veuillez saisir le code de vérification à 6 chiffres ci-dessous :</p>
-                <div style="text-align: center;">
-                    <h3 style="font-size: 24px; margin-bottom: 20px;">Code de vérification : <span style="color: #007bff;">${verificationCode}</span></h3>
-                    <p style="font-size: 14px; color: #888;">Ce code de vérification expirera dans 10 minutes.</p>
+                <div style="padding: 20px;">
+                    <h2 style="text-align: center; color: #333;">Bienvenue sur Flajoo, ${user.firstName} ${user.lastName} !</h2>
+                    <p style="text-align: justify; color: #555;">Nous sommes ravis de vous compter parmi nous sur Flajoo, votre nouveau réseau social de confiance.</p>
+                    <p style="text-align: justify; color: #555;">Pour finaliser votre inscription, veuillez entrer le code de vérification à 6 chiffres ci-dessous :</p>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <h3 style="font-size: 24px; color: #007bff; margin-bottom: 10px;">${verificationCode}</h3>
+                        <p style="font-size: 14px; color: #888;">Ce code est valable pendant 10 minutes.</p>
+                    </div>
+                    <p style="text-align: justify; color: #555;">Si vous n'avez pas demandé ce code, vous pouvez ignorer cet e-mail en toute sécurité.</p>
+                    <p style="text-align: left; font-size: 14px; color: #555;">Cordialement,<br><br>L'équipe Flajoo</p>
                 </div>
-                <p style="text-align: justify;">Si vous n'avez pas demandé ce code, veuillez ignorer cet e-mail.</p>
-                <p style="text-align: left;font-size: 14px;">Cordialement,<br><br>L'équipe Flajoo</p>
-                <p style="text-align: left;font-size: 12px;">30-32 Avenue de la République<br>Villejuif, Val-de-Marne<br>Île-de-France, France</p>
-                <ul style="list-style-type: none;font-size: 12px; padding-left: 0;">
-                    <li>Tel : + 33 6 05 57 28 02</li>
-                    <li>Email : <a href="mailto:contact@flajoo.com" style="color: #007bff; text-decoration: none;">contact@flajoo.com</a></li>
-                </ul>
-                
-            
+                <div style="padding: 20px; background-color: #f1f1f1; border-top: 1px solid #e0e0e0;">
+                    <p style="text-align: left; font-size: 12px; color: #555;">30-32 Avenue de la République<br>Villejuif, Val-de-Marne<br>Île-de-France, France</p>
+                    <ul style="list-style-type: none; padding-left: 0; font-size: 12px; color: #555;">
+                        <li>Tel : + 33 6 05 57 28 02</li>
+                        <li>Email : <a href="mailto:contact@flajoo.com" style="color: #007bff; text-decoration: none;">contact@flajoo.com</a></li>
+                    </ul>
+                </div>
             </div>
         
         </body>
-        </html>
-    `
+        </html>`,
+        attachments: [
+            {
+                filename: 'logo.png',
+                path: '../uploads/email/2.png',
+                cid: 'logo'
+            }
+        ]
     };
 
     transporter.sendMail(mailOptions, (err, info) => {
@@ -85,8 +97,9 @@ const sendVerificationEmail = (user) => {
 };
 
 
+
 // Contrôleur pour vérifier le compte de l'utilisateur
-exports.verifyAccount = async (req, res) => {
+module.exports.verifyAccount = async (req, res) => {
     const { email, verificationCode } = req.body;
 
     try {
@@ -105,7 +118,7 @@ exports.verifyAccount = async (req, res) => {
         // Marquez l'utilisateur comme vérifié
         user.isVerified = true;
         // Réinitialisez le code de vérification (optionnel)
-       // user.verificationCode = null;
+        // user.verificationCode = null;
         await user.save();
 
         res.status(200).json({ success: true, message: 'Compte vérifié avec succès' });
@@ -181,20 +194,21 @@ module.exports.signUp = async (req, res) => {
 
 
 module.exports.signIn = async (req, res) => {
-    const { email, password } = req.body;
-
+    const { email, password } = req.body
     try {
         const user = await UserModel.login(email, password);
         const token = createToken(user._id);
         console.log(token);
-        res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-        res.status(200).json({ user: user._id });
+        res.cookie('jwt', token, { httpOnly: true, maxAge });
+        res.status(200).json({ user: user._id })
         console.log(user._id);
     } catch (err) {
         const errors = signInErrors(err);
+        console.log("mes data", { email, password })
+
         res.status(400).json({ errors });
     }
-};
+}
 
 module.exports.logout = (req, res) => {
     res.cookie('jwt', '', { expires: new Date(0), path: '/' });
@@ -221,21 +235,30 @@ module.exports.changePassword = async (req, res) => {
 };
 
 
-module.exports.googleLogin = passport.authenticate('google', { scope: ['profile', 'email'] });
 
-// Callback de connexion avec Google
-module.exports.googleCallback = (req, res) => {
-    passport.authenticate('google', async (err, user, info) => {
-        if (err) {
-            console.error('Erreur lors de la connexion avec Google :', err);
-            return res.status(500).json({ error: 'Erreur interne du serveur' });
-        }
-        if (!user) {
-            return res.status(401).json({ error: 'Authentification Google échouée' });
-        }
-        // Générer le jeton JWT
-        const token = createToken(user._id);
-        // Vous pouvez également rediriger ou effectuer d'autres actions nécessaires ici
-        res.status(200).json({ token });
-    })(req, res);
-};
+const client = new OAuth2Client({
+    clientId: process.env.CLIENT_ID_GOOGLE_AUTH,
+    clientSecret: process.env.CLIENT_SECRET_GOOGLE_AUTH,
+});
+
+module.exports.googleSignIn = async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(" ")[1];
+        await getAccessToken(token); // Assurez-vous d'attendre la résolution de cette promesse
+
+        res.status(200).send("OK");
+    } catch (error) {
+        console.error("Erreur lors de la connexion Google :", error);
+        res.status(401).send("Unauthorized");
+    }
+}
+
+const getAccessToken = async (code) => {
+    try {
+        const { tokens } = await client.getToken(code); // Utilisez l'instance client pour appeler getToken
+        console.log("Tokens : ", tokens);
+        saveCredentials(tokens);
+    } catch (err) {
+        console.log("Error :", err);
+    }
+}

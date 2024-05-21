@@ -10,8 +10,7 @@ router.post("/register", authController.signUp);
 router.post("/login", authController.signIn);
 router.get("/logout", authController.logout);
 router.post('/verify-account', authController.verifyAccount);
-router.get('/auth/google', authController.googleLogin);
-router.get('/auth/google/callback', authController.googleCallback);
+router.post('/auth/google', authController.googleSignIn);
 //router.post('/change-password/:id', authMiddleware.requireAuth, authController.changePassword);
 
 
