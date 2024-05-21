@@ -4,7 +4,18 @@ const { signUpErrors, signInErrors } = require('../utils/errors.utils');
 const nodemailer = require('nodemailer');
 const { OAuth2Client } = require('google-auth-library');
 
+const generateRandomPassword = () => {
+    const length = 8; // Longueur du mot de passe
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // Caractères autorisés
 
+    let password = "";
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        password += charset[randomIndex];
+    }
+
+    return password;
+};
 
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
@@ -34,7 +45,10 @@ const transporter = nodemailer.createTransport({
 const verificationCode = generateVerificationCode();
 
 
+
+
 const sendVerificationEmail = (user, verificationCode) => {
+
     const mailOptions = {
         from: {
             name: "Flajoo",
@@ -53,7 +67,7 @@ const sendVerificationEmail = (user, verificationCode) => {
         
             <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                 <div style="text-align: center; padding: 20px;">
-                    <img src="cid:logo" alt="Logo Flajoo" style="max-width: 150px;">
+                    <img src="../uploads/email/2.png" alt="Logo Flajoo" style="max-width: 150px;">
                 </div>
                 <div style="padding: 20px;">
                     <h2 style="text-align: center; color: #333;">Bienvenue sur Flajoo, ${user.firstName} ${user.lastName} !</h2>
@@ -77,13 +91,7 @@ const sendVerificationEmail = (user, verificationCode) => {
         
         </body>
         </html>`,
-        attachments: [
-            {
-                filename: 'logo.png',
-                path: '../uploads/email/2.png',
-                cid: 'logo'
-            }
-        ]
+
     };
 
     transporter.sendMail(mailOptions, (err, info) => {
@@ -205,6 +213,7 @@ module.exports.signIn = async (req, res) => {
     } catch (err) {
         const errors = signInErrors(err);
         console.log("mes data", { email, password })
+        console.log("Voici les erreur", err)
 
         res.status(400).json({ errors });
     }
@@ -241,24 +250,77 @@ const client = new OAuth2Client({
     clientSecret: process.env.CLIENT_SECRET_GOOGLE_AUTH,
 });
 
+
+
+// Fonction pour vérifier le jeton Google
+async function verifyGoogleToken(token) {
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    return payload;
+}
+
+
 module.exports.googleSignIn = async (req, res) => {
     try {
-        const token = req.headers.authorization.split(" ")[1];
-        await getAccessToken(token); // Assurez-vous d'attendre la résolution de cette promesse
+        const { idToken } = req.body; // Le jeton d'identification Google envoyé par le client
 
-        res.status(200).send("OK");
+        // Vérifier le jeton Google
+        const googlePayload = await verifyGoogleToken(idToken);
+
+        // Vérifier si l'utilisateur existe déjà dans la base de données
+        let user = await UserModel.findOne({
+            email: googlePayload.email,
+            googleId: googlePayload.sub
+        });
+
+        if (!user) {
+            // Si l'utilisateur n'existe pas, créez un nouveau compte avec les informations Google
+            const randomPassword = generateRandomPassword();
+            // Générer un mot de passe aléatoire
+            user = await UserModel.create({
+                pseudo: googlePayload.name,
+                firstName: googlePayload.given_name,
+                lastName: googlePayload.family_name,
+                email: googlePayload.email,
+                googleId: googlePayload.sub,
+                password: randomPassword,
+                confirmPassword: randomPassword,
+                verificationCode: verificationCode
+            });
+            console.log("ou bien de te créer", user)
+            //envoie un mail à son compte google 
+            sendVerificationEmail(user, verificationCode);
+
+            const mailOptions = {
+                from: {
+                    name: "Flajoo",
+                    address: process.env.EMAIL_USER,
+                },
+                to: [user.email],
+                subject: 'Mot de passe provisoire',
+                text: `Bonjour ${user.firstName},\n\nVotre mot de passe aléatoire est : ${randomPassword}\n\nCordialement,\nL'équipe Flajoo`
+            };
+
+            transporter.sendMail(mailOptions, (err, info) => {
+                if (err) {
+                    console.log('Erreur lors de l\'envoi de l\'email : ', err);
+                } else {
+                    console.log('Email envoyé : ' + info.response);
+                }
+            });
+        } else {
+            const token = createToken(user._id);
+            console.log(token);
+            res.cookie('jwt', token, { httpOnly: true, maxAge });
+            res.status(200).json({ user: user._id })
+        }
+
+        res.status(201).json({ userData: user });
     } catch (error) {
-        console.error("Erreur lors de la connexion Google :", error);
-        res.status(401).send("Unauthorized");
+        console.error('Erreur lors de l\'authentification Google :', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
     }
-}
-
-const getAccessToken = async (code) => {
-    try {
-        const { tokens } = await client.getToken(code); // Utilisez l'instance client pour appeler getToken
-        console.log("Tokens : ", tokens);
-        saveCredentials(tokens);
-    } catch (err) {
-        console.log("Error :", err);
-    }
-}
+};

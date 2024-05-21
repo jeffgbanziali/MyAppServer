@@ -33,7 +33,7 @@ const corsOptions = {
 //socket.io
 const io = new Server(8900, {
   cors: {
-    origin: "http://192.168.0.14:3000",
+    origin: "http://192.168.1.174:3000",
   },
 });
 

@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema({
     googleId: {
         type: String,
         unique: true,
-    },    
+    },
     pseudo: {
         type: String,
         required: true,
@@ -33,13 +33,13 @@ const userSchema = mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        //required: function () { return !this.googleId; }, // Requis seulement si googleId n'est pas présent
         max: 1024,
         minlength: 8,
     },
     confirmPassword: {
         type: String,
-        required: true,
+        required: function () { return !this.googleId; }, // Requis seulement si googleId n'est pas présent
         max: 1024,
         minlength: 8,
     },
@@ -152,23 +152,30 @@ const userSchema = mongoose.Schema({
 
 //play function before save into display 
 
-userSchema.pre('save', async function (next) {
+/*userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
     const salt = await bcrypt.genSalt();
     this.password = await bcrypt.hash(this.password, salt);
     this.confirmPassword = await bcrypt.hash(this.confirmPassword, salt);
     next();
-});
+});*/
 //static method to login userxx
 userSchema.statics.login = async function (email, password) {
     const user = await this.findOne({ email });
 
     if (user) {
         const auth = await bcrypt.compare(password, user.password);
-        console.log("Mot de passe en texte clair:", password);
-        console.log("Mot de passe hashé:", user.password);
-        console.log("Résultat de bcrypt.compare:", auth);
-        console.log("est ce que c'est vrai? ", password === user.password)
+        console.log("Résultat de bcrypt.compare:", user.password);
+        console.log("est ce que c'est vrai? ", password)
+        const comparePasswords = async (password, hashedPassword) => {
+            return await bcrypt.compare(password, hashedPassword);
+        };
+
+        // Utilisation de la fonction pour comparer le mot de passe fourni avec celui stocké dans la base de données
+        const isPasswordCorrect = await comparePasswords(password, user.password);
+        console.log("Viesn me voir", isPasswordCorrect)
+
+
         if (auth) {
             return user;
         }
