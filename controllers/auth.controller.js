@@ -202,7 +202,7 @@ module.exports.signUp = async (req, res) => {
         });
 
         // Envoyer l'email de vérification
-        sendVerificationEmail(user);
+        sendVerificationEmail(user, verificationCode);
 
         res.status(201).json({ user: user._id, userData: user });
         console.log("Utilisateur créé : ", user);
