@@ -139,6 +139,8 @@ const userSchema = mongoose.Schema({
     profession: {
         company: String,
         position: String,
+        competences: String,
+
     },
     createdAt: {
         type: Date,

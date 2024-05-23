@@ -3,10 +3,17 @@ const jwt = require('jsonwebtoken');
 const { signUpErrors, signInErrors } = require('../utils/errors.utils');
 const nodemailer = require('nodemailer');
 const { OAuth2Client } = require('google-auth-library');
+const path = require('path');
+const filePath = path.join(__dirname, '../uploads/email/1.png');
+
+
+
+
 
 const generateRandomPassword = () => {
     const length = 8; // Longueur du mot de passe
-    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // Caractères autorisés
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()"; // Ajouter des caractères spéciaux
+    // Caractères autorisés
 
     let password = "";
     for (let i = 0; i < length; i++) {
@@ -67,7 +74,7 @@ const sendVerificationEmail = (user, verificationCode) => {
         
             <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                 <div style="text-align: center; padding: 20px;">
-                    <img src="../uploads/email/2.png" alt="Logo Flajoo" style="max-width: 150px;">
+                    <img src="cid:logoflajoo" alt="Logo Flajoo" style="max-width: 150px;">
                 </div>
                 <div style="padding: 20px;">
                     <h2 style="text-align: center; color: #333;">Bienvenue sur Flajoo, ${user.firstName} ${user.lastName} !</h2>
@@ -91,6 +98,11 @@ const sendVerificationEmail = (user, verificationCode) => {
         
         </body>
         </html>`,
+        attachments: [{
+            filename: '1.png',
+            path: filePath,
+            cid: 'logoflajoo'
+        }]
 
     };
 
@@ -149,6 +161,7 @@ module.exports.signUp = async (req, res) => {
         confirmPassword,
         phoneNumber,
         birthDate,
+        gender,
         nationality,
         homeAddress: {
             streetNumber,
@@ -173,6 +186,7 @@ module.exports.signUp = async (req, res) => {
             confirmPassword,
             phoneNumber,
             birthDate,
+            gender,
             nationality,
             homeAddress: {
                 streetNumber,
@@ -254,13 +268,18 @@ const client = new OAuth2Client({
 
 // Fonction pour vérifier le jeton Google
 async function verifyGoogleToken(token) {
-    const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
-    });
-    const payload = ticket.getPayload();
-    return payload;
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        return ticket.getPayload();
+    } catch (error) {
+        console.error('Erreur lors de la vérification du jeton Google:', error);
+        throw new Error('Jeton Google invalide');
+    }
 }
+
 
 
 module.exports.googleSignIn = async (req, res) => {
@@ -287,9 +306,9 @@ module.exports.googleSignIn = async (req, res) => {
                 email: googlePayload.email,
                 password: randomPassword,
                 googleId: googlePayload.sub,
-                confirmPassword: randomPassword,
                 verificationCode: verificationCode
             });
+
             console.log("ou bien de te créer", user)
             //envoie un mail à son compte google 
             sendVerificationEmail(user, verificationCode);
