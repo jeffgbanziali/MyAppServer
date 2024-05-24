@@ -132,16 +132,38 @@ const userSchema = mongoose.Schema({
         type: Boolean, // Indiquer si le compte de l'utilisateur est vérifié ou non
         default: false,
     },
+    profession: {
+        type: String,
+        maxlength: 100,
+    },
+
+    // Nouveau champ: Compétences
+    skills: {
+        type: [String],
+    },
+
+    // Nouveau champ: Formations
+    education: [{
+        institution: String,
+        degree: String,
+        fieldOfStudy: String,
+        startDate: Date,
+        endDate: Date,
+    }],
+
+    // Nouveau champ: Expériences
+    experience: [{
+        company: String,
+        role: String,
+        startDate: Date,
+        endDate: Date,
+        description: String,
+    }],
     references: {
         referralCode: String,
         referredBy: String,
     },
-    profession: {
-        company: String,
-        position: String,
-        competences: String,
 
-    },
     createdAt: {
         type: Date,
         default: Date.now,
