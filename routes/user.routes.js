@@ -21,6 +21,8 @@ router.get('/:id', userController.userInfo);
 router.patch("/:id", userController.updateBio);
 router.put("/:id", userController.updatePseudo);
 router.put('/user-modify/:id', userController.updateUser);
+router.post('/add-education', userController.addEducation);
+router.post('/add-experience', userController.addExperience);
 router.delete('/:id', userController.deleteUser);
 router.patch('/follow/:id', userController.follow);
 router.patch('/unfollow/:id', userController.unfollow);

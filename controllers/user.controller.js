@@ -132,6 +132,42 @@ module.exports.updateUser = async (req, res) => {
 };
 
 
+module.exports.addEducation = async (req, res) => {
+  const { userId, education } = req.body;
+
+  try {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    user.education.push(education);
+    await user.save();
+    console.log('Ajouter moi education', user)
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+
+
+module.exports.addExperience = async (req, res) => {
+  const { userId, experience } = req.body;
+
+  try {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    user.experience.push(experience);
+    await user.save();
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+
 // user delete
 
 module.exports.deleteUser = async (req, res) => {

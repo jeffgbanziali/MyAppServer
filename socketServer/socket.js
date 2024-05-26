@@ -16,8 +16,8 @@ module.exports = (io) => {
                     const existingUser = users.get(id);
                     users.set(id, { ...existingUser, socketId, online: true });
                 }
-                console.log("Users after adding:", Array.from(users.values()));
-                console.log("ils sont là:", users);
+                //console.log("Users after adding:", Array.from(users.values()));
+                //console.log("ils sont là:", users);
 
             } else {
                 console.error(`User with ID ${id} not found.`);
@@ -32,8 +32,8 @@ module.exports = (io) => {
             if (user) {
                 user.onlineStatus = onlineStatus;
                 await user.save();
-                console.log(`Statut en ligne de l'utilisateur ${userId} mis à jour dans la base de données.`);
-                console.log(`Voici le status${user} m dans la base de données.`);
+                //console.log(`Statut en ligne de l'utilisateur ${userId} mis à jour dans la base de données.`);
+                //console.log(`Voici le status${user} m dans la base de données.`);
             } else {
                 console.error(`Utilisateur avec l'ID ${userId} non trouvé.`);
             }

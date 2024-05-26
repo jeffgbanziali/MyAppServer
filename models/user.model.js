@@ -160,6 +160,7 @@ const userSchema = mongoose.Schema({
         startDate: Date,
         endDate: Date,
         description: String,
+        skills: String,
     }],
     references: {
         referralCode: String,
