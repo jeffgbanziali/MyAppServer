@@ -146,9 +146,11 @@ const userSchema = mongoose.Schema({
     education: [{
         institution: String,
         degree: String,
+        description: String,
         fieldOfStudy: String,
         startDate: Date,
         endDate: Date,
+        skills: String,
     }],
 
     // Nouveau champ: Expériences

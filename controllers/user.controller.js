@@ -100,6 +100,36 @@ module.exports.updatePseudo = async (req, res) => {
   }
 }
 
+module.exports.updateUser = async (req, res) => {
+  const userId = req.params.id;
+  const updateData = req.body;
+
+  try {
+    // Trouver l'utilisateur par ID
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    // Si le mot de passe est fourni dans les données de mise à jour, le hacher avant de sauvegarder
+    if (updateData.password) {
+      const salt = await bcrypt.genSalt();
+      updateData.password = await bcrypt.hash(updateData.password, salt);
+    }
+
+    // Mettre à jour les informations de l'utilisateur
+    Object.assign(user, updateData);
+
+
+    await user.save();
+
+    console.log('Ou est la mise à jour', user)
+
+    res.status(200).json({ message: 'Informations mises à jour avec succès', user });
+  } catch (error) {
+    res.status(500).json({ message: 'Erreur lors de la mise à jour des informations', error });
+  }
+};
 
 
 // user delete
