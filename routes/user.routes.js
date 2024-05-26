@@ -14,22 +14,35 @@ router.post('/auth/google', authController.googleSignIn);
 //router.post('/change-password/:id', authMiddleware.requireAuth, authController.changePassword);
 
 
-//userController
+//userController get
 router.get('/', userController.getAllUsers);
-router.patch("/updateProfile/:id", userController.updateProfile);
-router.get('/:id', userController.userInfo);
-router.patch("/:id", userController.updateBio);
-router.put("/:id", userController.updatePseudo);
-router.put('/user-modify/:id', userController.updateUser);
-router.post('/add-education', userController.addEducation);
-router.post('/add-experience', userController.addExperience);
-router.delete('/:id', userController.deleteUser);
-router.patch('/follow/:id', userController.follow);
-router.patch('/unfollow/:id', userController.unfollow);
 router.get('/friends/:id', userController.getFriends);
+router.get('/:id', userController.userInfo);
+
+//userController post
+
 router.post('/addFavPost', userController.addFavoritePost);
 router.post('/removeFavPost', userController.removeFavoritePost);
 router.post('/savedPost', userController.savedPost);
+router.post('/add-education', userController.addEducation);
+router.post('/add-experience', userController.addExperience);
+
+//userController patch
+router.patch("/updateProfile/:id", userController.updateProfile);
+router.patch('/follow/:id', userController.follow);
+router.patch('/unfollow/:id', userController.unfollow);
+router.patch("/:id", userController.updateBio);
+
+//userController put
+router.put("/:id", userController.updatePseudo);
+router.put('/user-modify/:id', userController.updateUser);
+
+
+//userController delete
+router.delete('/:id', userController.deleteUser);
+
+
+
 //router.post('/remSavedPost', userController.removeSavedPost);
 
 
