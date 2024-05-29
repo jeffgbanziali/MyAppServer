@@ -1,6 +1,6 @@
-const VideoRéelsModel = require("../models/réels.model");
-const UserModel = require("../models/user.model");
-const { uploadErrors } = require("../utils/errors.utils");
+const VideoRéelsModel = require("../../models/réels.model");
+const UserModel = require("../../models/user.model");
+const { uploadErrors } = require("../../utils/errors.utils");
 const ObjectID = require("mongoose").Types.ObjectId;
 
 module.exports.readVideoRéels = (req, res) => {

@@ -1,4 +1,4 @@
-const ConversationModel = require("../models/conversation.model");
+const ConversationModel = require("../../models/conversation.model");
 
 
 module.exports.createConversation = async (req, res) => {

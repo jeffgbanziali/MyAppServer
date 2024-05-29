@@ -141,7 +141,12 @@ const userSchema = mongoose.Schema({
     skills: {
         type: [String],
     },
-
+    resetPasswordToken: {
+        type: String
+    },
+    resetPasswordExpires: {
+        type: Date
+    },
     // Nouveau champ: Formations
     education: [{
         institution: String,
@@ -180,12 +185,22 @@ const userSchema = mongoose.Schema({
 //play function before save into display 
 
 userSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) return next();
-    const salt = await bcrypt.genSalt();
-    this.password = await bcrypt.hash(this.password, salt);
-    this.confirmPassword = await bcrypt.hash(this.confirmPassword, salt);
-    next();
+    // Ne pas vérifier confirmPassword si resetPasswordToken est défini
+    if (this.resetPasswordToken) {
+        next();
+    } else {
+        if (!this.isModified('password')) return next();
+        if (this.password !== this.confirmPassword) {
+            throw new Error('Passwords do not match');
+        }
+        const salt = await bcrypt.genSalt();
+        this.password = await bcrypt.hash(this.password, salt);
+        this.confirmPassword = await bcrypt.hash(this.confirmPassword, salt);
+        next();
+    }
 });
+
+
 
 
 //static method to login user

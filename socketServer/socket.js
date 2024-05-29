@@ -32,8 +32,8 @@ module.exports = (io) => {
             if (user) {
                 user.onlineStatus = onlineStatus;
                 await user.save();
-                //console.log(`Statut en ligne de l'utilisateur ${userId} mis à jour dans la base de données.`);
-                //console.log(`Voici le status${user} m dans la base de données.`);
+                console.log(`Statut en ligne de l'utilisateur ${userId} mis à jour dans la base de données.`);
+                console.log(`Voici le status ${user.onlineStatus} m dans la base de données.`);
             } else {
                 console.error(`Utilisateur avec l'ID ${userId} non trouvé.`);
             }

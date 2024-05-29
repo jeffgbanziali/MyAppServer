@@ -1,6 +1,6 @@
-const UserModel = require('../models/user.model');
+const UserModel = require('../../models/user.model');
 const jwt = require('jsonwebtoken');
-const { signUpErrors, signInErrors } = require('../utils/errors.utils');
+const { signUpErrors, signInErrors } = require('../../utils/errors.utils');
 const nodemailer = require('nodemailer');
 const { OAuth2Client } = require('google-auth-library');
 const path = require('path');

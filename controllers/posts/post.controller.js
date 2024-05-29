@@ -1,9 +1,9 @@
-const PostModel = require('../models/post.model');
-const UserModel = require('../models/user.model');
-const { uploadErrors } = require('../utils/errors.utils');
+const PostModel = require('../../models/post.model');
+const UserModel = require('../../models/user.model');
+const { uploadErrors } = require('../../utils/errors.utils');
 const ObjectID = require('mongoose').Types.ObjectId;
 const sizeOf = require('image-size');
-const { firestore, storage, uploadImageToFirebase } = require('../config/firebase');
+const { firestore, storage, uploadImageToFirebase } = require('../../config/firebase');
 const fs = require("fs");
 const { promisify } = require("util");
 const pipeline = promisify(require("stream").pipeline);

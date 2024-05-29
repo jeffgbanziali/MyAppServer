@@ -1,9 +1,9 @@
-const StoryModel = require('../models/story.model');
-const UserModel = require('../models/user.model');
+const StoryModel = require('../../models/story.model');
+const UserModel = require('../../models/user.model');
 const ObjectID = require('mongoose').Types.ObjectId;
 const multer = require('multer');
-const { uploadErrors } = require('../utils/errors.utils');
-const { uploadStoryToFirebase } = require('../config/firebase');
+const { uploadErrors } = require('../../utils/errors.utils');
+const { uploadStoryToFirebase } = require('../../config/firebase');
 
 module.exports.readStories = async (req, res) => {
     try {

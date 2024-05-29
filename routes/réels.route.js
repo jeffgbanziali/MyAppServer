@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const videoRéelsController = require("../controllers/réels.controller");
+const videoRéelsController = require("../controllers/réels/réels.controller");
 
 // Lire toutes les vidéos réelles
 router.get("/", videoRéelsController.readVideoRéels);

@@ -1,5 +1,5 @@
-const UserModel = require("../models/user.model");
-const { uploadErrors } = require("../utils/errors.utils");
+const UserModel = require("../../models/user.model");
+const { uploadErrors } = require("../../utils/errors.utils");
 const ObjectID = require("mongoose").Types.ObjectId;
 
 //user model

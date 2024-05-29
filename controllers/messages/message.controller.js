@@ -1,5 +1,5 @@
-const conversationModel = require("../models/conversation.model");
-const MessageModel = require("../models/message.model");
+const conversationModel = require("../../models/conversation.model");
+const MessageModel = require("../../models/message.model");
 
 module.exports.sendMessage = async (req, res) => {
   const { senderId, receiverId, conversationId, text, attachment } = req.body;

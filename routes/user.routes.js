@@ -1,6 +1,7 @@
 const router = require('express').Router()
-const authController = require('../controllers/auth.controller');
-const userController = require('../controllers/user.controller');
+const authController = require('../controllers/users/auth.controller');
+const userController = require('../controllers/users/user.controller');
+const userPasswordController = require('../controllers/users/userPassword.controller');
 const authMiddleware = require('../middleware/auth.middleware');
 
 
@@ -11,6 +12,11 @@ router.post("/login", authController.signIn);
 router.get("/logout", authController.logout);
 router.post('/verify-account', authController.verifyAccount);
 router.post('/auth/google', authController.googleSignIn);
+router.post('/forgotPassword', userPasswordController.forgotPassword);
+router.post('/resetPassword/:token', userPasswordController.resetPassword);
+
+module.exports = router;
+
 //router.post('/change-password/:id', authMiddleware.requireAuth, authController.changePassword);
 
 
