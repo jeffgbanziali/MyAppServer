@@ -6,11 +6,9 @@ const sizeOf = require('image-size');
 const { firestore, storage, uploadImageToFirebase } = require('../../config/firebase');
 const fs = require("fs");
 const { promisify } = require("util");
+const generateRecommendations = require('../../myDataModel/Data');
+
 const pipeline = promisify(require("stream").pipeline);
-
-
-const MAX_FILE_SIZE = 500000;
-const ALLOWED_IMAGE_TYPES = ["image/jpg", "image/png", "image/jpeg"];
 
 module.exports.readPost = (req, res) => {
     PostModel.find((err, docs) => {
@@ -88,6 +86,31 @@ module.exports.getPostsByUser = async (req, res) => {
 };*/
 
 
+// recommendationController.js
+
+
+module.exports.getRecommendations = async (req, res) => {
+    try {
+        const userId = req.params.userId; // Récupérer l'ID de l'utilisateur à partir des paramètres de l'URL
+        console.log(`ID de l'utilisateur demandé: ${userId}`);
+
+        const recommendations = await generateRecommendations();
+        console.log('Recommandations générées:', recommendations);
+
+        // Filtrer les recommandations pour l'utilisateur donné
+        const userRecommendations = recommendations.find(rec => rec.userId === userId);
+        console.log(`Recommandations pour l'utilisateur ${userId}:`, userRecommendations);
+
+        if (userRecommendations) {
+            res.json(userRecommendations);
+        } else {
+            res.status(404).json({ error: `No recommendations found for user ID ${userId}` });
+        }
+    } catch (error) {
+        console.error("Une erreur s'est produite :", error);
+        res.status(500).json({ error: "Une erreur s'est produite lors de la génération des recommandations." });
+    }
+};
 
 module.exports.createPost = async (req, res) => {
     try {

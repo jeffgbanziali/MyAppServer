@@ -8,6 +8,7 @@ const upload = multer({ dest: path.join(__dirname, 'uploads/posts') });
 //routes
 router.get('/', postController.readPost);
 router.get('/:id', postController.getPostsByUser);
+router.get('/actuality-file/my-user/:userId', postController.getRecommendations);
 router.post('/', upload.array("file", 5), postController.createPost);
 router.put('/:id', postController.updatePost);
 router.delete('/:id', postController.deletePost);

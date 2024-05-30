@@ -73,8 +73,15 @@ async function generateRecommendations() {
 
     // Générer des recommandations personnalisées pour chaque utilisateur
     const recommendations = [];
+
     predictionsArray.forEach((userPredictions, userId) => {
-        // Créer un tableau d'objets { postId: score } pour chaque utilisateur
+        // Récupérer l'objet utilisateur correspondant
+        const user = usersData[userId];
+
+        // Récupérer l'ID d'utilisateur de cet objet utilisateur
+        const userUserId = user.userId;
+
+        // Utiliser l'ID d'utilisateur dans les recommandations
         const userRecommendations = userPredictions.map((score, postId) => ({ _id: postId, score: score }));
 
         // Trier les recommandations par score décroissant
@@ -84,10 +91,11 @@ async function generateRecommendations() {
         const topRecommendations = userRecommendations.slice(0, 10);
 
         // Ajouter les recommandations à la liste globale des recommandations
-        recommendations.push({ userId: userId, recommendations: topRecommendations });
+        recommendations.push({ userId: userUserId, recommendations: topRecommendations });
     });
 
-    console.log("voici mes recommandations", recommendations);
+
+    // console.log("voici mes recommandations", recommendations);
 
     return recommendations;
 }

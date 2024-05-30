@@ -75,11 +75,7 @@ app.use("/api/videoReels", videoRéelsRoutes);
 
 
 
-
-
-
-
-app.get('/recommendations', async (req, res) => {
+/*app.get('/recommendations', async (req, res) => {
   try {
     const recommendations = await generateRecommendations();
     res.json(recommendations);
@@ -87,9 +83,7 @@ app.get('/recommendations', async (req, res) => {
     console.error("Une erreur s'est produite :", error);
     res.status(500).json({ error: "Une erreur s'est produite lors de la génération des recommandations." });
   }
-});
-
-
+});*/
 
 
 
