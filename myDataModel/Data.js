@@ -16,7 +16,7 @@ async function generateRecommendations() {
     // Créer une liste des posts avec leur ID comme clé
     const postsMap = new Map();
     postsData.forEach((post, index) => {
-        post.postId = index; // Ajouter un postId unique à chaque post
+        post._id = index; // Ajouter un postId unique à chaque post
         postsMap.set(index, post);
     });
 
@@ -75,7 +75,7 @@ async function generateRecommendations() {
     const recommendations = [];
     predictionsArray.forEach((userPredictions, userId) => {
         // Créer un tableau d'objets { postId: score } pour chaque utilisateur
-        const userRecommendations = userPredictions.map((score, postId) => ({ postId: postId, score: score }));
+        const userRecommendations = userPredictions.map((score, postId) => ({ _id: postId, score: score }));
 
         // Trier les recommandations par score décroissant
         userRecommendations.sort((a, b) => b.score - a.score);
