@@ -13,6 +13,7 @@ const storyRoutes = require("./routes/story.route");
 const videoRéelsRoutes = require("./routes/réels.route");
 const conversationRoutes = require("./routes/conversation.route");
 const messageRoutes = require("./routes/message.route");
+const generateRecommendations = require('./myDataModel/Data');
 const { checkUser, requireAuth } = require("./middleware/auth.middleware");
 const cors = require("cors");
 const http = require("http");
@@ -70,6 +71,42 @@ app.use("/api/stories", storyRoutes);
 app.use("/api/conversation", conversationRoutes);
 app.use("/api/message", messageRoutes);
 app.use("/api/videoReels", videoRéelsRoutes);
+
+
+
+
+
+
+
+
+app.get('/recommendations', async (req, res) => {
+  try {
+    const recommendations = await generateRecommendations();
+    res.json(recommendations);
+  } catch (error) {
+    console.error("Une erreur s'est produite :", error);
+    res.status(500).json({ error: "Une erreur s'est produite lors de la génération des recommandations." });
+  }
+});
+
+
+
+
+
+
+
+
+/*app.get('/api/recommendations/:userId', async (req, res) => {
+  const userId = parseInt(req.params.userId);
+  try {
+    const recommendations = await generateRecommendations(userId);
+    res.json({ recommendations });
+  } catch (error) {
+    res.status(500).json({ error: 'Une erreur s\'est produite lors de la génération des recommandations.' });
+  }
+});*/
+
+
 
 //myAppServer
 const server = http.createServer(app);

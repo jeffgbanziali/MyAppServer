@@ -1,0 +1,393 @@
+[
+    {
+        "posterId": "user1",
+        "message": "Premier post !",
+        "categories": [
+            "Tech",
+            "Programming"
+        ],
+        "media": [
+            {
+                "mediaUrl": "https://example.com/media1.jpg",
+                "mediaType": "image"
+            }
+        ],
+        "likers": [
+            "user2",
+            "user3"
+        ],
+        "comments": [
+            {
+                "commenterId": "user2",
+                "commenterPseudo": "Commenter1",
+                "text": "Ceci est un commentaire.",
+                "timestamp": 1622376000000,
+                "commentLikers": [
+                    "user1"
+                ]
+            }
+        ]
+    },
+    {
+        "posterId": "user2",
+        "message": "Un autre post intéressant.",
+        "categories": [
+            "Health",
+            "Fitness"
+        ],
+        "media": [
+            {
+                "mediaUrl": "https://example.com/media2.mp4",
+                "mediaType": "video",
+                "duration": 60
+            }
+        ],
+        "likers": [
+            "user1",
+            "user3",
+            "user4"
+        ],
+        "comments": [
+            {
+                "commenterId": "user3",
+                "commenterPseudo": "Commenter2",
+                "text": "Super post !",
+                "timestamp": 1622472000000,
+                "commentLikers": [
+                    "user2"
+                ]
+            }
+        ]
+    },
+    {
+        "posterId": "user3",
+        "message": "Post sur la cuisine !",
+        "categories": [
+            "Food",
+            "Cooking"
+        ],
+        "media": [
+            {
+                "mediaUrl": "https://example.com/media3.jpg",
+                "mediaType": "image"
+            },
+            {
+                "mediaUrl": "https://example.com/media4.jpg",
+                "mediaType": "image"
+            }
+        ],
+        "likers": [
+            "user1",
+            "user2",
+            "user4"
+        ],
+        "comments": [
+            {
+                "commenterId": "user4",
+                "commenterPseudo": "Commenter3",
+                "text": "Délicieux !",
+                "timestamp": 1622568000000,
+                "commentLikers": [
+                    "user3"
+                ]
+            }
+        ]
+    },
+    {
+        "posterId": "user4",
+        "message": "Nouveau post sur la technologie.",
+        "categories": [
+            "Tech"
+        ],
+        "media": [],
+        "likers": [
+            "user2",
+            "user3"
+        ],
+        "comments": []
+    },
+    {
+        "posterId": "user1",
+        "message": "Voyage en famille !",
+        "categories": [
+            "Travel"
+        ],
+        "media": [
+            {
+                "mediaUrl": "https://example.com/media5.jpg",
+                "mediaType": "image"
+            }
+        ],
+        "likers": [
+            "user2",
+            "user3",
+            "user4"
+        ],
+        "comments": [
+            {
+                "commenterId": "user2",
+                "commenterPseudo": "Commenter1",
+                "text": "Magnifique endroit !",
+                "timestamp": 1622664000000,
+                "commentLikers": [
+                    "user1"
+                ]
+            }
+        ]
+    },
+    {
+        "posterId": "user2",
+        "message": "Nouvelle découverte musicale !",
+        "categories": [
+            "Music"
+        ],
+        "media": [
+            {
+                "mediaUrl": "https://example.com/media6.mp3",
+                "mediaType": "audio"
+            }
+        ],
+        "likers": [
+            "user1"
+        ],
+        "comments": []
+    },
+    {
+        "posterId": "user3",
+        "message": "Idée de bricolage pour le weekend.",
+        "categories": [
+            "DIY",
+            "Crafts"
+        ],
+        "media": [
+            {
+                "mediaUrl": "https://example.com/media7.jpg",
+                "mediaType": "image"
+            }
+        ],
+        "likers": [],
+        "comments": []
+    },
+    {
+        "posterId": "user4",
+        "message": "Citation inspirante du jour.",
+        "categories": [
+            "Inspiration"
+        ],
+        "media": [],
+        "likers": [],
+        "comments": []
+    },
+    {
+        "posterId": "user1",
+        "message": "Conseils pour la productivité.",
+        "categories": [
+            "Productivity",
+            "Self-improvement"
+        ],
+        "media": [],
+        "likers": [
+            "user3",
+            "user4"
+        ],
+        "comments": [
+            {
+                "commenterId": "user2",
+                "commenterPseudo": "Commenter1",
+                "text": "Très utile !",
+                "timestamp": 1622750400000,
+                "commentLikers": [
+                    "user1"
+                ]
+            }
+        ]
+    },
+    {
+        "posterId": "user2",
+        "message": "Nouveau livre à recommander !",
+        "categories": [
+            "Books",
+            "Reading"
+        ],
+        "media": [],
+        "likers": [],
+        "comments": []
+    },
+    {
+        "posterId": "user3",
+        "message": "Recette de cuisine rapide et délicieuse !",
+        "categories": [
+            "Food",
+            "Cooking"
+        ],
+        "media": [
+            {
+                "mediaUrl": "https://example.com/media8.jpg",
+                "mediaType": "image"
+            }
+        ],
+        "likers": [
+            "user1",
+            "user2"
+        ],
+        "comments": [
+            {
+                "commenterId": "user2",
+                "commenterPseudo": "Commenter1",
+                "text": "J'adore cette recette !",
+                "timestamp": 1622846400000,
+                "commentLikers": [
+                    "user3"
+                ]
+            }
+        ]
+    },
+    {
+        "posterId": "user4",
+        "message": "Nouveau gadget technologique à découvrir !",
+        "categories": [
+            "Tech",
+            "Gadgets"
+        ],
+        "media": [
+            {
+                "mediaUrl": "https://example.com/media9.jpg",
+                "mediaType": "image"
+            }
+        ],
+        "likers": [
+            "user1",
+            "user3"
+        ],
+        "comments": [
+            {
+                "commenterId": "user1",
+                "commenterPseudo": "Commenter2",
+                "text": "Cela semble intéressant !",
+                "timestamp": 1622942400000,
+                "commentLikers": [
+                    "user4"
+                ]
+            }
+        ]
+    },
+    {
+        "posterId": "user1",
+        "message": "Exercices de fitness à faire à la maison !",
+        "categories": [
+            "Health",
+            "Fitness"
+        ],
+        "media": [],
+        "likers": [
+            "user2",
+            "user4"
+        ],
+        "comments": []
+    },
+    {
+        "posterId": "user2",
+        "message": "Nouvelle découverte en matière de jeu vidéo !",
+        "categories": [
+            "Game",
+            "Video game"
+        ],
+        "media": [
+            {
+                "mediaUrl": "https://example.com/media10.jpg",
+                "mediaType": "image"
+            }
+        ],
+        "likers": [
+            "user1",
+            "user3"
+        ],
+        "comments": []
+    },
+    {
+        "posterId": "user3",
+        "message": "Analyse des dernières tendances en matière de cinéma.",
+        "categories": [
+            "Cinema",
+            "Movie"
+        ],
+        "media": [],
+        "likers": [],
+        "comments": []
+    },
+    {
+        "posterId": "user4",
+        "message": "Stratégies pour gagner en compétition sportive.",
+        "categories": [
+            "Sport",
+            "Competition"
+        ],
+        "media": [],
+        "likers": [
+            "user1",
+            "user2",
+            "user3"
+        ],
+        "comments": []
+    },
+    {
+        "posterId": "user1",
+        "message": "Nouvelles fonctionnalités à découvrir sur notre application !",
+        "categories": [
+            "Tech",
+            "App development"
+        ],
+        "media": [],
+        "likers": [
+            "user2"
+        ],
+        "comments": []
+    },
+    {
+        "posterId": "user2",
+        "message": "Idées de vacances pour un séjour relaxant.",
+        "categories": [
+            "Travel",
+            "Relaxation"
+        ],
+        "media": [
+            {
+                "mediaUrl": "https://example.com/media11.jpg",
+                "mediaType": "image"
+            }
+        ],
+        "likers": [
+            "user1",
+            "user3"
+        ],
+        "comments": []
+    },
+    {
+        "posterId": "user3",
+        "message": "Conseils pour réussir un entretien d'embauche.",
+        "categories": [
+            "Career",
+            "Job interview"
+        ],
+        "media": [],
+        "likers": [
+            "user1",
+            "user4"
+        ],
+        "comments": []
+    },
+    {
+        "posterId": "user4",
+        "message": "Techniques de méditation pour la gestion du stress.",
+        "categories": [
+            "Health",
+            "Mental wellness"
+        ],
+        "media": [],
+        "likers": [
+            "user2",
+            "user3"
+        ],
+        "comments": []
+    }
+]

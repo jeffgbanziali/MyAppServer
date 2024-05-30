@@ -11,6 +11,9 @@ const PostSchema = new mongoose.Schema(
             trim: true,
             maxlength: 500,
         },
+        categories: {
+            type: [String]
+        },
         media: [{
             mediaUrl: {
                 type: String,
