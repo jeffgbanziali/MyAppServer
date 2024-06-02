@@ -18,6 +18,7 @@ module.exports.readPost = (req, res) => {
 };
 
 
+
 module.exports.getPostsByUser = async (req, res) => {
     try {
         const userId = req.params.id;
@@ -86,23 +87,17 @@ module.exports.getPostsByUser = async (req, res) => {
 };*/
 
 
-// recommendationController.js
-
 
 module.exports.getRecommendations = async (req, res) => {
     try {
-        const userId = req.params.userId; // Récupérer l'ID de l'utilisateur à partir des paramètres de l'URL
-        console.log(`ID de l'utilisateur demandé: ${userId}`);
+        const userId = req.params.userId;
 
         const recommendations = await generateRecommendations();
-        console.log('Recommandations générées:', recommendations);
 
-        // Filtrer les recommandations pour l'utilisateur donné
         const userRecommendations = recommendations.find(rec => rec.userId === userId);
-        console.log(`Recommandations pour l'utilisateur ${userId}:`, userRecommendations);
 
         if (userRecommendations) {
-            res.json(userRecommendations);
+            res.json(userRecommendations.recommendations);
         } else {
             res.status(404).json({ error: `No recommendations found for user ID ${userId}` });
         }
@@ -111,6 +106,8 @@ module.exports.getRecommendations = async (req, res) => {
         res.status(500).json({ error: "Une erreur s'est produite lors de la génération des recommandations." });
     }
 };
+
+
 
 module.exports.createPost = async (req, res) => {
     try {
@@ -164,7 +161,6 @@ module.exports.createPost = async (req, res) => {
 };
 
 
-
 module.exports.updatePost = (req, res) => {
     if (!ObjectID.isValid(req.params.id))
         return res.status(400).send("ID unknown : " + req.params.id);
@@ -214,6 +210,7 @@ module.exports.likePost = async (req, res) => {
                         $addToSet: { likes: req.params.id },
                     },
                     { new: true })
+
                     .then((data) => res.send(data))
                     .catch((err) => res.status(501).send({ message: err }));
             })

@@ -1,6 +1,6 @@
 [
     {
-        "posterId": "user1",
+        "posterId": "5f80be3856a9cb3418b2f28b",
         "message": "Premier post !",
         "categories": [
             "Tech",
@@ -8,28 +8,28 @@
         ],
         "media": [
             {
-                "mediaUrl": "https://example.com/media1.jpg",
+                "mediaUrl": "https://cdn.sanity.io/images/oaglaatp/production/42b50a0dc11c23985e611a936d8d4d6dee2d0b50-3720x2160.png?w=3720&h=2160&auto=format",
                 "mediaType": "image"
             }
         ],
         "likers": [
-            "user2",
-            "user3"
+            "664cc38968d24b8391c1afb8",
+            "6653a726174217fa72ab178a"
         ],
         "comments": [
             {
-                "commenterId": "user2",
-                "commenterPseudo": "Commenter1",
+                "commenterId": "664cc38968d24b8391c1afb8",
+                "commenterPseudo": "Jeff Gbanziali",
                 "text": "Ceci est un commentaire.",
                 "timestamp": 1622376000000,
                 "commentLikers": [
-                    "user1"
+                    "5f80be3856a9cb3418b2f28b"
                 ]
             }
         ]
     },
     {
-        "posterId": "user2",
+        "posterId": "5fa6a26f508f20277cfefbe1",
         "message": "Un autre post intéressant.",
         "categories": [
             "Health",
@@ -37,30 +37,30 @@
         ],
         "media": [
             {
-                "mediaUrl": "https://example.com/media2.mp4",
+                "mediaUrl": "https://www.tiktok.com/@brutofficiel/video/7364350819619147041?is_from_webapp=1&sender_device=pc",
                 "mediaType": "video",
                 "duration": 60
             }
         ],
         "likers": [
-            "user1",
-            "user3",
-            "user4"
+            "5fa6a26f508f20277cfefbe1",
+            "6653a726174217fa72ab178a",
+            "5faabe0e2b26a34098286cfb"
         ],
         "comments": [
             {
-                "commenterId": "user3",
-                "commenterPseudo": "Commenter2",
+                "commenterId": "6653a726174217fa72ab178a",
+                "commenterPseudo": "Flajooooo",
                 "text": "Super post !",
                 "timestamp": 1622472000000,
                 "commentLikers": [
-                    "user2"
+                    "5fa6a26f508f20277cfefbe1"
                 ]
             }
         ]
     },
     {
-        "posterId": "user3",
+        "posterId": "63bdc87f448ae0b867087218",
         "message": "Post sur la cuisine !",
         "categories": [
             "Food",
@@ -68,92 +68,97 @@
         ],
         "media": [
             {
-                "mediaUrl": "https://example.com/media3.jpg",
+                "mediaUrl": "https://images.radio-canada.ca/v1/alimentation/recette/4x3/gateau-fromage-base.jpg",
                 "mediaType": "image"
             },
             {
-                "mediaUrl": "https://example.com/media4.jpg",
+                "mediaUrl": "https://www.ptitchef.com/imgupl/recipe/gateau-au-fromage-blanc--432148p708264.jpg",
                 "mediaType": "image"
             }
         ],
         "likers": [
-            "user1",
-            "user2",
-            "user4"
+            "6529ab0ed842089b978b06ce",
+            "664cc38968d24b8391c1afb8",
+            "6653a726174217fa72ab178a"
         ],
         "comments": [
             {
-                "commenterId": "user4",
-                "commenterPseudo": "Commenter3",
+                "commenterId": "6653a726174217fa72ab178a",
+                "commenterPseudo": "Flajooooo",
                 "text": "Délicieux !",
                 "timestamp": 1622568000000,
                 "commentLikers": [
-                    "user3"
+                    "63bdc87f448ae0b867087218"
                 ]
             }
         ]
     },
     {
-        "posterId": "user4",
+        "posterId": "5f85e4e67a53ec1f88d1dcce",
         "message": "Nouveau post sur la technologie.",
         "categories": [
             "Tech"
         ],
-        "media": [],
+        "media": [
+            {
+                "mediaUrl": "https://www.usine-digitale.fr/mediatheque/7/2/2/001015227_896x598_c.png",
+                "mediaType": "image"
+            }
+        ],
         "likers": [
-            "user2",
-            "user3"
+            "664cc38968d24b8391c1afb8",
+            "5fa6a26f508f20277cfefbe1"
         ],
         "comments": []
     },
     {
-        "posterId": "user1",
+        "posterId": "5fa6a26f508f20277cfefbe1",
         "message": "Voyage en famille !",
         "categories": [
             "Travel"
         ],
         "media": [
             {
-                "mediaUrl": "https://example.com/media5.jpg",
+                "mediaUrl": "https://www.andbeyond.com/wp-content/uploads/sites/5/Family-travel.jpg",
                 "mediaType": "image"
             }
         ],
         "likers": [
-            "user2",
-            "user3",
-            "user4"
+            "664cc38968d24b8391c1afb8",
+            "5faabe0e2b26a34098286cfb",
+            "6653a726174217fa72ab178a"
         ],
         "comments": [
             {
-                "commenterId": "user2",
-                "commenterPseudo": "Commenter1",
+                "commenterId": "664cc38968d24b8391c1afb8",
+                "commenterPseudo": "Jeff Gbanziali",
                 "text": "Magnifique endroit !",
                 "timestamp": 1622664000000,
                 "commentLikers": [
-                    "user1"
+                    "5fa6a26f508f20277cfefbe1"
                 ]
             }
         ]
     },
     {
-        "posterId": "user2",
+        "posterId": "664cc38968d24b8391c1afb8",
         "message": "Nouvelle découverte musicale !",
         "categories": [
             "Music"
         ],
         "media": [
             {
-                "mediaUrl": "https://example.com/media6.mp3",
-                "mediaType": "audio"
+                "mediaUrl": "https://i.ytimg.com/vi/DvUM65kgOTM/hqdefault.jpg",
+                "mediaType": "image"
             }
         ],
         "likers": [
-            "user1"
+            "5f85e4e67a53ec1f88d1dcce"
         ],
         "comments": []
     },
     {
-        "posterId": "user3",
+        "posterId": "5fa69c3ab695893c3c57870b",
         "message": "Idée de bricolage pour le weekend.",
         "categories": [
             "DIY",
@@ -161,25 +166,34 @@
         ],
         "media": [
             {
-                "mediaUrl": "https://example.com/media7.jpg",
+                "mediaUrl": "https://webmuseo.com/ws/musenor/app/file/download/D462127.jpg?key=2527f1zpp7blqz4axjss9yo00i4tvq8ri",
                 "mediaType": "image"
             }
         ],
-        "likers": [],
+        "likers": [
+            "6653a726174217fa72ab178a"
+        ],
         "comments": []
     },
     {
-        "posterId": "user4",
+        "posterId": "5fa6a37f0b502137d839d4bc",
         "message": "Citation inspirante du jour.",
         "categories": [
             "Inspiration"
         ],
-        "media": [],
-        "likers": [],
+        "media": [
+            {
+                "mediaUrl": "https://i.pinimg.com/originals/68/5b/86/685b861b5a11fffe7da9b7cf5ecde5a9.png",
+                "mediaType": "image"
+            }
+        ],
+        "likers": [
+            "6653a726174217fa72ab178a"
+        ],
         "comments": []
     },
     {
-        "posterId": "user1",
+        "posterId": "5fa69c3ab695893c3c57870b",
         "message": "Conseils pour la productivité.",
         "categories": [
             "Productivity",
@@ -187,34 +201,41 @@
         ],
         "media": [],
         "likers": [
-            "user3",
-            "user4"
+            "5f9ed6fca9df7838e47da76b",
+            "6653a726174217fa72ab178a"
         ],
         "comments": [
             {
-                "commenterId": "user2",
-                "commenterPseudo": "Commenter1",
+                "commenterId": "664cc38968d24b8391c1afb8",
+                "commenterPseudo": "Jeff Gbanziali",
                 "text": "Très utile !",
                 "timestamp": 1622750400000,
                 "commentLikers": [
-                    "user1"
+                    "5fa69c3ab695893c3c57870b"
                 ]
             }
         ]
     },
     {
-        "posterId": "user2",
+        "posterId": "664cc38968d24b8391c1afb8",
         "message": "Nouveau livre à recommander !",
         "categories": [
             "Books",
             "Reading"
         ],
-        "media": [],
-        "likers": [],
+        "media": [
+            {
+                "mediaUrl": "https://des-livres-pour-changer-de-vie.com/wp-content/uploads/2022/12/le-code-d-une-vie-extraordinaire-vishen-la-khiani-3.jpeg",
+                "mediaType": "image"
+            }
+        ],
+        "likers": [
+            "6653a726174217fa72ab178a"
+        ],
         "comments": []
     },
     {
-        "posterId": "user3",
+        "posterId": "5f9ed6fca9df7838e47da76b",
         "message": "Recette de cuisine rapide et délicieuse !",
         "categories": [
             "Food",
@@ -222,28 +243,28 @@
         ],
         "media": [
             {
-                "mediaUrl": "https://example.com/media8.jpg",
+                "mediaUrl": "https://www.tompress.com/I-Grande-38124-recette-de-lasagnes-fraiches.net.jpg",
                 "mediaType": "image"
             }
         ],
         "likers": [
-            "user1",
-            "user2"
+            "6653a726174217fa72ab178a",
+            "664cc38968d24b8391c1afb8"
         ],
         "comments": [
             {
-                "commenterId": "user2",
-                "commenterPseudo": "Commenter1",
+                "commenterId": "664cc38968d24b8391c1afb8",
+                "commenterPseudo": "Jeff Gbanziali",
                 "text": "J'adore cette recette !",
                 "timestamp": 1622846400000,
                 "commentLikers": [
-                    "user3"
+                    "5f9ed6fca9df7838e47da76b"
                 ]
             }
         ]
     },
     {
-        "posterId": "user4",
+        "posterId": "6653a726174217fa72ab178a",
         "message": "Nouveau gadget technologique à découvrir !",
         "categories": [
             "Tech",
@@ -251,42 +272,47 @@
         ],
         "media": [
             {
-                "mediaUrl": "https://example.com/media9.jpg",
+                "mediaUrl": "https://www.krea-lead.com/wp-content/uploads/2024/05/gpt-4o-1024x536.webp",
                 "mediaType": "image"
             }
         ],
         "likers": [
-            "user1",
-            "user3"
+            "63c10417e9fdd7c2985d613f",
+            "63ccac7666461c7f3c33df36"
         ],
         "comments": [
             {
-                "commenterId": "user1",
+                "commenterId": "63c10417e9fdd7c2985d613f",
                 "commenterPseudo": "Commenter2",
                 "text": "Cela semble intéressant !",
                 "timestamp": 1622942400000,
                 "commentLikers": [
-                    "user4"
+                    "6653a726174217fa72ab178a"
                 ]
             }
         ]
     },
     {
-        "posterId": "user1",
+        "posterId": "63ccac7666461c7f3c33df36",
         "message": "Exercices de fitness à faire à la maison !",
         "categories": [
             "Health",
             "Fitness"
         ],
-        "media": [],
+        "media": [
+            {
+                "mediaUrl": "https://contents.mediadecathlon.com/p1843904/k$8e911af7b9f35081b2d931da23c195e2/1800x0/1848pt1848/3412xcr3696/default.jpg?format=auto",
+                "mediaType": "image"
+            }
+        ],
         "likers": [
-            "user2",
-            "user4"
+            "664cc38968d24b8391c1afb8",
+            "5f9eef12beda9f25ccc147dd"
         ],
         "comments": []
     },
     {
-        "posterId": "user2",
+        "posterId": "664cc38968d24b8391c1afb8",
         "message": "Nouvelle découverte en matière de jeu vidéo !",
         "categories": [
             "Game",
@@ -294,29 +320,37 @@
         ],
         "media": [
             {
-                "mediaUrl": "https://example.com/media10.jpg",
+                "mediaUrl": "https://static.fnac-static.com/multimedia/Images/FD/Comete/176562/CCP_IMG_1200x800/2351262.jpg",
                 "mediaType": "image"
             }
         ],
         "likers": [
-            "user1",
-            "user3"
+            "6653a726174217fa72ab178a",
+            "63d07d2bd1e1a077e9da3f68"
         ],
         "comments": []
     },
     {
-        "posterId": "user3",
+        "posterId": "5f9ed64ca9df7838e47da767",
         "message": "Analyse des dernières tendances en matière de cinéma.",
         "categories": [
             "Cinema",
             "Movie"
         ],
-        "media": [],
-        "likers": [],
+        "media": [
+            {
+                "mediaUrl": "https://www.kingdom-figurine.fr/wp-content/uploads/2021/12/CAESAR-WITH-GUN-STATUETTE-SOFT-VINYL-LA-PLANETE-DES-SINGES-SUPREMATIE-STAR-ACE-39-CM-4897057889186-kingdom-figurine-2.jpg",
+                "mediaType": "image"
+            }
+        ],
+        "likers": [
+            "664cc38968d24b8391c1afb8",
+            "6653a726174217fa72ab178a"
+        ],
         "comments": []
     },
     {
-        "posterId": "user4",
+        "posterId": "63ccac7666461c7f3c33df36",
         "message": "Stratégies pour gagner en compétition sportive.",
         "categories": [
             "Sport",
@@ -325,13 +359,13 @@
         "media": [],
         "likers": [
             "user1",
-            "user2",
-            "user3"
+            "664cc38968d24b8391c1afb8",
+            "6653a726174217fa72ab178a"
         ],
         "comments": []
     },
     {
-        "posterId": "user1",
+        "posterId": "63d07caad1e1a077e9da3f66",
         "message": "Nouvelles fonctionnalités à découvrir sur notre application !",
         "categories": [
             "Tech",
@@ -339,12 +373,12 @@
         ],
         "media": [],
         "likers": [
-            "user2"
+            "664cc38968d24b8391c1afb8"
         ],
         "comments": []
     },
     {
-        "posterId": "user2",
+        "posterId": "6653a726174217fa72ab178a",
         "message": "Idées de vacances pour un séjour relaxant.",
         "categories": [
             "Travel",
@@ -352,18 +386,18 @@
         ],
         "media": [
             {
-                "mediaUrl": "https://example.com/media11.jpg",
+                "mediaUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/532535422.jpg?k=37de416cfab88879533d5ceaa815682f2aca3dd82599ba94ca1d50a046433b11&o=&hp=1",
                 "mediaType": "image"
             }
         ],
         "likers": [
-            "user1",
-            "user3"
+            "63d07caad1e1a077e9da3f66",
+            "664cc38968d24b8391c1afb8"
         ],
         "comments": []
     },
     {
-        "posterId": "user3",
+        "posterId": "5f9ecd53045b03044c16c59a",
         "message": "Conseils pour réussir un entretien d'embauche.",
         "categories": [
             "Career",
@@ -371,13 +405,13 @@
         ],
         "media": [],
         "likers": [
-            "user1",
-            "user4"
+            "664cc38968d24b8391c1afb8",
+            "6653a726174217fa72ab178a"
         ],
         "comments": []
     },
     {
-        "posterId": "user4",
+        "posterId": "5fa6a845035eb11808be90e1",
         "message": "Techniques de méditation pour la gestion du stress.",
         "categories": [
             "Health",
@@ -385,8 +419,8 @@
         ],
         "media": [],
         "likers": [
-            "user2",
-            "user3"
+            "664cc38968d24b8391c1afb8",
+            "6653a726174217fa72ab178a"
         ],
         "comments": []
     }
