@@ -125,6 +125,7 @@ module.exports.markMessagesAsRead = async (req, res) => {
         $set: { isRead: true }
       }
     );
+    console.log("message is read")
     res.status(200).json({ message: "Messages marked as read" });
   } catch (error) {
     console.error('Error marking messages as read:', error);

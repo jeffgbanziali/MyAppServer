@@ -5,6 +5,6 @@ const upload = require("../multer");
 router.post("/", upload.single('attachment'), messageController.sendMessage);
 router.get("/:conversationId", messageController.readMessage);
 router.delete("/:messageId", messageController.deleteMessage);
-router.put('/markAsRead/:conversationId', messageController.markMessagesAsRead);
+router.put('/conversations/:conversationId/mark-read', messageController.markMessagesAsRead);
 
 module.exports = router;

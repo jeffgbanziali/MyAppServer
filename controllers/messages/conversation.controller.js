@@ -1,4 +1,5 @@
 const ConversationModel = require("../../models/conversation.model");
+const MessageModel = require("../../models/message.model");
 
 
 module.exports.createConversation = async (req, res) => {
@@ -73,11 +74,28 @@ module.exports.markConversationAsRead = async (req, res) => {
       return res.status(404).json({ message: "Conversation not found" });
     }
 
-    conversation.message.isRead = true;
-    const conversationsSaved = await conversation.save();
-   // console.log("Conversation marked as read", conversationsSaved);
+    // Recherche des messages associés à la conversation dans la base de données
+    const messages = await MessageModel.find({ conversationId: conversationId });
 
-    return res.status(200).json({ message: "Conversation marked as read" });
+    // Mise à jour du statut isRead de la conversation
+    conversation.message.isRead = true;
+
+    // Comparaison et mise à jour des messages correspondants
+    messages.forEach(message => {
+      if (message.text === conversation.message.text) {
+        message.isRead = true;
+        message.save();
+        console.log('Mes messages', message.text === conversation.message.text)
+
+      }
+    });
+    console.log('Il est sauvé', messages)
+
+
+
+    await conversation.save();
+
+    return res.status(200).json({ message: "Conversation and related messages marked as read" });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
