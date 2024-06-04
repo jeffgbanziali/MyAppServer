@@ -16,8 +16,8 @@ module.exports = (io) => {
                     const existingUser = users.get(id);
                     users.set(id, { ...existingUser, socketId, online: true });
                 }
-                //console.log("Users after adding:", Array.from(users.values()));
-                //console.log("ils sont là:", users);
+                console.log("Users after adding:", Array.from(users.values()));
+                console.log("ils sont là:", users);
 
             } else {
                 console.error(`User with ID ${id} not found.`);

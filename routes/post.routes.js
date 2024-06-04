@@ -11,6 +11,7 @@ router.get('/:id', postController.getPostsByUser);
 router.get('/actuality-file/my-user/:userId', postController.getRecommendations);
 router.post('/', upload.array("file", 5), postController.createPost);
 router.put('/:id', postController.updatePost);
+router.post('/view/:postId', postController.handleViewPost);
 router.delete('/:id', postController.deletePost);
 router.patch('/like-post/:id', postController.likePost);
 router.patch('/unlike-post/:id', postController.unlikePost);

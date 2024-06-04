@@ -582,3 +582,37 @@ module.exports.unlikeReply = async (req, res) => {
 };
 
 
+
+module.exports.handleViewPost = async (req, res) => {
+    const postId = req.params.postId;
+
+    try {
+        const post = await PostModel.findById(postId);
+
+        if (!post) {
+            return res.status(404).json({ message: "Le post n'a pas été trouvé." });
+        }
+
+        // Récupérer l'identifiant de l'utilisateur à partir des informations d'authentification
+        const viewerId = req.body.viewerId;
+
+        // Vérifier si l'utilisateur a déjà vu ce post
+        const alreadyViewed = post.views.some(view => view.viewerId === viewerId);
+        const isPoster = post.posterId === viewerId;
+
+        if (!alreadyViewed && !isPoster) {
+            // Ajouter une nouvelle vue si l'utilisateur n'est pas l'auteur du post et n'a pas déjà vu le post
+            post.views.push({
+                viewerId: viewerId,
+                viewed_at: Date.now(),
+            });
+            await post.save();
+        }
+
+        return res.status(200).json({ post });
+    } catch (error) {
+        console.error("Erreur lors de la visualisation du post :", error);
+        return res.status(500).json({ message: "Une erreur s'est produite lors de la visualisation du post." });
+    }
+};
+

@@ -11,6 +11,31 @@ const PostSchema = new mongoose.Schema(
             trim: true,
             maxlength: 500,
         },
+        location: {
+            type: {
+                city: String,
+                department: String,
+                country: String
+            }
+        },
+        tags: {
+            type: [String]
+        },
+        views: {
+            type: [
+                {
+                    viewerId: {
+                        type: String,
+                        required: true,
+                    },
+                    viewed_at: {
+                        type: Date,
+                        default: Date.now,
+                    },
+                },
+            ],
+            default: [],
+        },
         categories: {
             type: [String]
         },
@@ -107,6 +132,61 @@ const PostSchema = new mongoose.Schema(
             ],
             default: [],
         },
+
+        privacy: {
+            type: String,
+            enum: ['public', 'private'],
+            default: 'public',
+        },
+        event: {
+            type: {
+                name: String,
+                date: Date,
+                location: String,
+                description: String,
+            }
+        },
+        links: {
+            type: [String]
+        },
+        status: {
+            type: String,
+            enum: ['draft', 'published', 'archived'],
+            default: 'draft',
+        },
+        moderationStatus: {
+            type: String,
+            enum: ['pending', 'approved', 'rejected'],
+            default: 'pending',
+        },
+        mentions: {
+            type: [String], // Mentions d'utilisateurs
+        },
+        shares: {
+            type: [
+                {
+                    sharedId: {
+                        type: String,
+                        required: true,
+                    },
+                    shared_at: {
+                        type: Date,
+                        default: Date.now,
+                    },
+                },
+            ],
+            default: [],
+        },
+        collections: {
+            type: [String],
+        },
+        permissions: {
+            type: {
+                edit: [String],
+                delete: [String],
+                share: [String],
+            }
+        }
     },
     {
         timestamps: true,

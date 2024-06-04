@@ -84,10 +84,10 @@ async function generateRecommendations() {
         // Utilisation de l'ID d'utilisateur dans les recommandations
         const userRecommendations = userPredictions.map((score, index) => {
             const post = postsData.find(post => post.index === index);
-           // console.log("Mes posts sont là", post);
+            // console.log("Mes posts sont là", post);
             return { ...post, score }; // Ajoute le score directement à l'objet post
         });
-        
+
 
 
 
