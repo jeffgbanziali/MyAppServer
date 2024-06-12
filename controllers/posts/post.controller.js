@@ -92,6 +92,10 @@ module.exports.getRecommendations = async (req, res) => {
     try {
         const userId = req.params.userId;
 
+        if (!userId) {
+            return res.status(400).json({ error: 'User ID is required.' });
+        }
+
         const recommendations = await generateRecommendations();
 
         const userRecommendations = recommendations.find(rec => rec.userId === userId);
@@ -102,10 +106,11 @@ module.exports.getRecommendations = async (req, res) => {
             res.status(404).json({ error: `No recommendations found for user ID ${userId}` });
         }
     } catch (error) {
-        console.error("Une erreur s'est produite :", error);
-        res.status(500).json({ error: "Une erreur s'est produite lors de la génération des recommandations." });
+        console.error("An error occurred while generating recommendations:", error);
+        res.status(500).json({ error: "An error occurred during the generation of recommendations." });
     }
 };
+
 
 
 
