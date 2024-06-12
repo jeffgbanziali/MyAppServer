@@ -216,19 +216,30 @@ module.exports.signUp = async (req, res) => {
 
 
 module.exports.signIn = async (req, res) => {
-    const { email, password } = req.body
+    const { email, password } = req.body;
     try {
+        // Vérifier les données d'identification de l'utilisateur
         const user = await UserModel.login(email, password);
+
+        // Générer un token JWT
         const token = createToken(user._id);
-        console.log(token);
-        res.cookie('jwt', token, { httpOnly: true, maxAge });
-        res.status(200).json({ user: user._id })
-        console.log(user._id);
+
+        // Définir le cookie JWT avec une durée de vie et les options sécurisées
+        res.cookie('jwt', token, {
+            httpOnly: true,
+            maxAge: maxAge,
+            secure: process.env.NODE_ENV === 'production', // S'assurer que le cookie n'est transmis que sur HTTPS en production
+            sameSite: 'strict' // Restreindre la transmission du cookie aux requêtes provenant du même site
+        });
+
+        // Répondre avec l'ID de l'utilisateur
+        res.status(200).json({ user: user._id });
     } catch (err) {
+        // Gérer les erreurs d'authentification de manière sécurisée
         const errors = signInErrors(err);
         res.status(400).json({ errors });
     }
-}
+};
 
 module.exports.logout = (req, res) => {
     res.cookie('jwt', '', { expires: new Date(0), path: '/' });
@@ -330,12 +341,24 @@ module.exports.googleSignIn = async (req, res) => {
 
             const token = createToken(user._id);
             console.log(token);
-            res.cookie('jwt', token, { httpOnly: true, maxAge });
+            res.cookie('jwt', token, {
+                httpOnly: true,
+                maxAge: maxAge,
+                secure: process.env.NODE_ENV === 'production', // S'assurer que le cookie n'est transmis que sur HTTPS en production
+                sameSite: 'strict' // Restreindre la transmission du cookie aux requêtes provenant du même site
+            });
+
             res.status(201).json({ userData: user }); // Envoyer la réponse ici
         } else {
             const token = createToken(user._id);
             console.log(token);
-            res.cookie('jwt', token, { httpOnly: true, maxAge });
+            res.cookie('jwt', token, {
+                httpOnly: true,
+                maxAge: maxAge,
+                secure: process.env.NODE_ENV === 'production', // S'assurer que le cookie n'est transmis que sur HTTPS en production
+                sameSite: 'strict' // Restreindre la transmission du cookie aux requêtes provenant du même site
+            });
+
             res.status(200).json({ user: user._id }); // Envoyer la réponse ici
         }
     } catch (error) {
