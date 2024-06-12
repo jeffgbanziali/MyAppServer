@@ -19,16 +19,16 @@ module.exports.signUpErrors = (err) => {
 };
 
 module.exports.signInErrors = (err) => {
-    let errors = { email: '', password: '' }
+    let errors = { email: '', password: '' };
 
-    if (err.message.includes("email"))
-        errors.email = "Email inconnu";
-
-    if (err.message.includes('password'))
-        errors.password = "Le mot de passe ne correspond pas"
+    if (err.message.includes('email') || err.message.includes('password')) {
+        errors.email = "Identifiant ou mot de passe incorrect !!!";
+    }
 
     return errors;
-}
+};
+
+
 
 module.exports.uploadErrors = (err) => {
     let errors = { message: '' };

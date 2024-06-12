@@ -226,9 +226,6 @@ module.exports.signIn = async (req, res) => {
         console.log(user._id);
     } catch (err) {
         const errors = signInErrors(err);
-        console.log("mes data", { email, password })
-        console.log("Voici les erreur", err)
-
         res.status(400).json({ errors });
     }
 }
