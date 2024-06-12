@@ -585,31 +585,38 @@ module.exports.unlikeReply = async (req, res) => {
 
 module.exports.handleViewPost = async (req, res) => {
     const postId = req.params.postId;
+    const viewerId = req.body.viewerId;
 
     try {
+        // Recherche le post par ID
         const post = await PostModel.findById(postId);
 
+        // Si le post n'est pas trouvé, retourner une erreur 404
         if (!post) {
             return res.status(404).json({ message: "Le post n'a pas été trouvé." });
         }
 
-        // Récupérer l'identifiant de l'utilisateur à partir des informations d'authentification
-        const viewerId = req.body.viewerId;
-
-        // Vérifier si l'utilisateur a déjà vu ce post
+        // Vérifies si le post a déjà été vu par l'utilisateur ou si l'utilisateur est le posteur
         const alreadyViewed = post.views.some(view => view.viewerId === viewerId);
         const isPoster = post.posterId === viewerId;
 
         if (!alreadyViewed && !isPoster) {
-            // Ajouter une nouvelle vue si l'utilisateur n'est pas l'auteur du post et n'a pas déjà vu le post
+            // Ajoute une nouvelle vue
             post.views.push({
                 viewerId: viewerId,
                 viewed_at: Date.now(),
             });
+
+            // Sauvegarde le post avec la nouvelle vue
             await post.save();
+            console.log("Le post en question :", post.views);
+            return res.status(200).json({ data: { post, message: "Le post a été bien consulté par l'utilisateur." } });
+        } else {
+            // Si le post a déjà été vu par l'utilisateur ou si l'utilisateur est le posteur
+            console.log("Le post en question, déjà vu par l'utilisateur :", post.views);
+            return res.status(201).json({ message: "Le post a déjà été vu par l'utilisateur." });
         }
 
-        return res.status(200).json({ post });
     } catch (error) {
         console.error("Erreur lors de la visualisation du post :", error);
         return res.status(500).json({ message: "Une erreur s'est produite lors de la visualisation du post." });

@@ -9,7 +9,9 @@
         "media": [
             {
                 "mediaUrl": "https://cdn.sanity.io/images/oaglaatp/production/42b50a0dc11c23985e611a936d8d4d6dee2d0b50-3720x2160.png?w=3720&h=2160&auto=format",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 218,
+                "width": 317
             }
         ],
         "likers": [
@@ -26,7 +28,8 @@
                     "5f80be3856a9cb3418b2f28b"
                 ]
             }
-        ]
+        ],
+        "createdAt": "31 mai 2024"
     },
     {
         "posterId": "5fa6a26f508f20277cfefbe1",
@@ -39,7 +42,9 @@
             {
                 "mediaUrl": "https://www.tiktok.com/@brutofficiel/video/7364350819619147041?is_from_webapp=1&sender_device=pc",
                 "mediaType": "video",
-                "duration": 60
+                "duration": 60,
+                "height": 400,
+                "width": 300
             }
         ],
         "likers": [
@@ -57,7 +62,8 @@
                     "5fa6a26f508f20277cfefbe1"
                 ]
             }
-        ]
+        ],
+        "createdAt": "18 mai 2024"
     },
     {
         "posterId": "63bdc87f448ae0b867087218",
@@ -69,11 +75,15 @@
         "media": [
             {
                 "mediaUrl": "https://images.radio-canada.ca/v1/alimentation/recette/4x3/gateau-fromage-base.jpg",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 300,
+                "width": 400
             },
             {
                 "mediaUrl": "https://www.ptitchef.com/imgupl/recipe/gateau-au-fromage-blanc--432148p708264.jpg",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 300,
+                "width": 400
             }
         ],
         "likers": [
@@ -91,7 +101,8 @@
                     "63bdc87f448ae0b867087218"
                 ]
             }
-        ]
+        ],
+        "createdAt": "20 mai 2024"
     },
     {
         "posterId": "5f85e4e67a53ec1f88d1dcce",
@@ -102,14 +113,17 @@
         "media": [
             {
                 "mediaUrl": "https://www.usine-digitale.fr/mediatheque/7/2/2/001015227_896x598_c.png",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 300,
+                "width": 400
             }
         ],
         "likers": [
             "664cc38968d24b8391c1afb8",
             "5fa6a26f508f20277cfefbe1"
         ],
-        "comments": []
+        "comments": [],
+        "createdAt": "06 mai 2024"
     },
     {
         "posterId": "5fa6a26f508f20277cfefbe1",
@@ -120,7 +134,9 @@
         "media": [
             {
                 "mediaUrl": "https://www.andbeyond.com/wp-content/uploads/sites/5/Family-travel.jpg",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 300,
+                "width": 400
             }
         ],
         "likers": [
@@ -138,7 +154,8 @@
                     "5fa6a26f508f20277cfefbe1"
                 ]
             }
-        ]
+        ],
+        "createdAt": "02 juin 2024"
     },
     {
         "posterId": "664cc38968d24b8391c1afb8",
@@ -149,13 +166,16 @@
         "media": [
             {
                 "mediaUrl": "https://i.ytimg.com/vi/DvUM65kgOTM/hqdefault.jpg",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 300,
+                "width": 400
             }
         ],
         "likers": [
             "5f85e4e67a53ec1f88d1dcce"
         ],
-        "comments": []
+        "comments": [],
+        "createdAt": "02 juin 2024"
     },
     {
         "posterId": "5fa69c3ab695893c3c57870b",
@@ -167,13 +187,16 @@
         "media": [
             {
                 "mediaUrl": "https://webmuseo.com/ws/musenor/app/file/download/D462127.jpg?key=2527f1zpp7blqz4axjss9yo00i4tvq8ri",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 218,
+                "width": 400
             }
         ],
         "likers": [
             "6653a726174217fa72ab178a"
         ],
-        "comments": []
+        "comments": [],
+        "createdAt": "20 mai 2024"
     },
     {
         "posterId": "5fa6a37f0b502137d839d4bc",
@@ -184,13 +207,16 @@
         "media": [
             {
                 "mediaUrl": "https://i.pinimg.com/originals/68/5b/86/685b861b5a11fffe7da9b7cf5ecde5a9.png",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 400,
+                "width": 400
             }
         ],
         "likers": [
             "6653a726174217fa72ab178a"
         ],
-        "comments": []
+        "comments": [],
+        "createdAt": "31 mai 2024"
     },
     {
         "posterId": "5fa69c3ab695893c3c57870b",
@@ -226,13 +252,16 @@
         "media": [
             {
                 "mediaUrl": "https://des-livres-pour-changer-de-vie.com/wp-content/uploads/2022/12/le-code-d-une-vie-extraordinaire-vishen-la-khiani-3.jpeg",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 600,
+                "width": 218
             }
         ],
         "likers": [
             "6653a726174217fa72ab178a"
         ],
-        "comments": []
+        "comments": [],
+        "createdAt": "01 juin 2024"
     },
     {
         "posterId": "5f9ed6fca9df7838e47da76b",
@@ -244,7 +273,9 @@
         "media": [
             {
                 "mediaUrl": "https://www.tompress.com/I-Grande-38124-recette-de-lasagnes-fraiches.net.jpg",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 400,
+                "width": 400
             }
         ],
         "likers": [
@@ -261,7 +292,8 @@
                     "5f9ed6fca9df7838e47da76b"
                 ]
             }
-        ]
+        ],
+        "createdAt": "02 Mars 2024"
     },
     {
         "posterId": "6653a726174217fa72ab178a",
@@ -273,7 +305,9 @@
         "media": [
             {
                 "mediaUrl": "https://www.krea-lead.com/wp-content/uploads/2024/05/gpt-4o-1024x536.webp",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 300,
+                "width": 400
             }
         ],
         "likers": [
@@ -290,7 +324,8 @@
                     "6653a726174217fa72ab178a"
                 ]
             }
-        ]
+        ],
+        "createdAt": "01 avril 2024"
     },
     {
         "posterId": "63ccac7666461c7f3c33df36",
@@ -302,14 +337,17 @@
         "media": [
             {
                 "mediaUrl": "https://contents.mediadecathlon.com/p1843904/k$8e911af7b9f35081b2d931da23c195e2/1800x0/1848pt1848/3412xcr3696/default.jpg?format=auto",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 600,
+                "width": 218
             }
         ],
         "likers": [
             "664cc38968d24b8391c1afb8",
             "5f9eef12beda9f25ccc147dd"
         ],
-        "comments": []
+        "comments": [],
+        "createdAt": "29 avril 2024"
     },
     {
         "posterId": "664cc38968d24b8391c1afb8",
@@ -321,14 +359,17 @@
         "media": [
             {
                 "mediaUrl": "https://static.fnac-static.com/multimedia/Images/FD/Comete/176562/CCP_IMG_1200x800/2351262.jpg",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 300,
+                "width": 400
             }
         ],
         "likers": [
             "6653a726174217fa72ab178a",
             "63d07d2bd1e1a077e9da3f68"
         ],
-        "comments": []
+        "comments": [],
+        "createdAt": "28 mai 2024"
     },
     {
         "posterId": "5f9ed64ca9df7838e47da767",
@@ -340,14 +381,17 @@
         "media": [
             {
                 "mediaUrl": "https://www.kingdom-figurine.fr/wp-content/uploads/2021/12/CAESAR-WITH-GUN-STATUETTE-SOFT-VINYL-LA-PLANETE-DES-SINGES-SUPREMATIE-STAR-ACE-39-CM-4897057889186-kingdom-figurine-2.jpg",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 600,
+                "width": 218
             }
         ],
         "likers": [
             "664cc38968d24b8391c1afb8",
             "6653a726174217fa72ab178a"
         ],
-        "comments": []
+        "comments": [],
+        "createdAt": "28 mai 2024"
     },
     {
         "posterId": "63ccac7666461c7f3c33df36",
@@ -362,7 +406,8 @@
             "664cc38968d24b8391c1afb8",
             "6653a726174217fa72ab178a"
         ],
-        "comments": []
+        "comments": [],
+        "createdAt": "28 mai 2024"
     },
     {
         "posterId": "63d07caad1e1a077e9da3f66",
@@ -375,7 +420,8 @@
         "likers": [
             "664cc38968d24b8391c1afb8"
         ],
-        "comments": []
+        "comments": [],
+        "createdAt": "28 mai 2024"
     },
     {
         "posterId": "6653a726174217fa72ab178a",
@@ -387,14 +433,17 @@
         "media": [
             {
                 "mediaUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/532535422.jpg?k=37de416cfab88879533d5ceaa815682f2aca3dd82599ba94ca1d50a046433b11&o=&hp=1",
-                "mediaType": "image"
+                "mediaType": "image",
+                "height": 300,
+                "width": 400
             }
         ],
         "likers": [
             "63d07caad1e1a077e9da3f66",
             "664cc38968d24b8391c1afb8"
         ],
-        "comments": []
+        "comments": [],
+        "createdAt": "28 mai 2024"
     },
     {
         "posterId": "5f9ecd53045b03044c16c59a",
@@ -408,7 +457,8 @@
             "664cc38968d24b8391c1afb8",
             "6653a726174217fa72ab178a"
         ],
-        "comments": []
+        "comments": [],
+        "createdAt": "28 mars 2024"
     },
     {
         "posterId": "5fa6a845035eb11808be90e1",
@@ -422,6 +472,7 @@
             "664cc38968d24b8391c1afb8",
             "6653a726174217fa72ab178a"
         ],
-        "comments": []
+        "comments": [],
+        "createdAt": "25 mai 2024"
     }
 ]

@@ -160,7 +160,7 @@ const PostSchema = new mongoose.Schema(
             default: 'pending',
         },
         mentions: {
-            type: [String], // Mentions d'utilisateurs
+            type: [String],
         },
         shares: {
             type: [
