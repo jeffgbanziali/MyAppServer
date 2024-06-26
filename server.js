@@ -2,8 +2,6 @@ const express = require("express");
 require("dotenv").config({ path: "./config/.env" });
 require("./config/db");
 const bodyParser = require("body-parser");
-const passport = require('passport');
-const passportSetup = require('./config/passport');
 const { Server } = require("socket.io");
 const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
@@ -13,8 +11,7 @@ const storyRoutes = require("./routes/story.route");
 const videoRéelsRoutes = require("./routes/réels.route");
 const conversationRoutes = require("./routes/conversation.route");
 const messageRoutes = require("./routes/message.route");
-const notificationRouter = require("./routes/notification.route")
-const generateRecommendations = require('./myDataModel/Data');
+const notificationRouter = require("./routes/notification.route");
 const { checkUser, requireAuth } = require("./middleware/auth.middleware");
 const cors = require("cors");
 const http = require("http");
@@ -50,10 +47,6 @@ app.use(cookieSession({
   keys: ["cyberwolve"],
   maxAge: 24 * 60 * 60 * 100
 }));
-
-// Utilisez passportSetup pour initialiser Passport.js
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
