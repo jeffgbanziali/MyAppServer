@@ -13,6 +13,7 @@ const storyRoutes = require("./routes/story.route");
 const videoRéelsRoutes = require("./routes/réels.route");
 const conversationRoutes = require("./routes/conversation.route");
 const messageRoutes = require("./routes/message.route");
+const notificationRouter = require("./routes/notification.route")
 const generateRecommendations = require('./myDataModel/Data');
 const { checkUser, requireAuth } = require("./middleware/auth.middleware");
 const cors = require("cors");
@@ -71,11 +72,7 @@ app.use("/api/stories", storyRoutes);
 app.use("/api/conversation", conversationRoutes);
 app.use("/api/message", messageRoutes);
 app.use("/api/videoReels", videoRéelsRoutes);
-
-
-
-
-
+app.use('/api/notifications', notificationRouter);
 
 
 

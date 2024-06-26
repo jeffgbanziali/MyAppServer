@@ -79,7 +79,8 @@ const PostSchema = new mongoose.Schema(
                     },
                     commentType: {
                         type: String,
-                        enum: ['video', 'image', 'audio', 'gif'],
+                        enum: ['text', 'video', 'image', 'audio', 'gif'],
+                        default: "",
                     },
                     commentLikers: {
                         type: [String],
