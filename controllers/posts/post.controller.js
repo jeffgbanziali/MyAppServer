@@ -33,58 +33,6 @@ module.exports.getPostsByUser = async (req, res) => {
 };
 
 
-/*module.exports.createPost = async (req, res) => {
-    try {
-        let media;
-
-        // Vérifie si des médias ont été envoyés depuis le client
-        if (req.body.media) {
-            // Utilise Promise.all pour traiter toutes les opérations d'upload en parallèle
-            const mediaUploadPromises = req.body.media.map(async (item) => {
-                // Upload chaque média vers Firebase Storage et récupère l'URL
-                const mediaUrl = await uploadImageToFirebase(item.mediaUrl, `${req.body.posterId}_${Date.now()}_${item.mediaType}`);
-                return {
-                    mediaUrl,
-                    mediaType: item.mediaType,
-                };
-            });
-            // Attends que toutes les opérations d'upload soient terminées
-            media = await Promise.all(mediaUploadPromises);
-        }
-
-        // Création d'une nouvelle instance du modèle de poste
-        const newPost = new PostModel({
-            posterId: req.body.posterId,
-            message: req.body.message,
-            media: media, // Utilise le tableau de médias
-            likers: [],
-            comments: [],
-        });
-
-        // Sauvegarde du nouveau poste dans la base de données MongoDB
-        const savedPost = await newPost.save();
-        console.log('Post saved to MongoDB:', savedPost);
-
-        // Renvoie les informations nécessaires au front-end
-        res.status(201).json({
-            _id: savedPost._id,
-            posterId: savedPost.posterId,
-            message: savedPost.message,
-            media: savedPost.media,
-            likers: savedPost.likers,
-            comments: savedPost.comments,
-            createdAt: savedPost.createdAt,
-            updatedAt: savedPost.updatedAt,
-        });
-    } catch (err) {
-        console.error('Error during post creation:', err);
-        let errorMessage = 'An error occurred during post creation.';
-        if (err.message) errorMessage = err.message;
-
-        const errors = uploadErrors(errorMessage);
-        res.status(500).json({ errors });
-    }
-};*/
 
 
 
@@ -164,6 +112,87 @@ module.exports.createPost = async (req, res) => {
         res.status(500).json({ errors });
     }
 };
+
+
+module.exports.sharePostWithUser = async (req, res) => {
+    try {
+        const { postId, sharedId } = req.body;
+
+        const post = await PostModel.findById(postId);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        post.shares.push({ sharedId });
+        await post.save();
+
+        res.status(200).json({ message: 'Post shared successfully', post });
+    } catch (error) {
+        res.status(500).json({ message: 'Error sharing post', error });
+    }
+};
+
+
+module.exports.sharePostAsNewPost = async (req, res) => {
+    try {
+        const { postId, posterId, message } = req.body;
+
+        // Validation des données d'entrée
+        if (!postId || !posterId) {
+            return res.status(400).json({ message: 'postId and posterId are required' });
+        }
+
+        const originalPost = await PostModel.findById(postId);
+        if (!originalPost) {
+            return res.status(404).json({ message: 'Original post not found' });
+        }
+
+        console.log('Mon new post est là');
+
+        const newPost = new PostModel({
+            posterId,
+            originalPosterId: originalPost.posterId,
+            message: message,
+            originalMessage: originalPost.message,
+            location: originalPost.location,
+            tags: originalPost.tags,
+            media: originalPost.media,
+            categories: originalPost.categories,
+            likers: [],
+            comments: [], // Assurez-vous que les commentaires initiaux ne contiennent pas de champs invalides
+            privacy: 'public',
+            shares: [],
+            collections: [],
+            permissions: {
+                edit: [posterId],
+                delete: [posterId],
+                share: [posterId],
+            },
+            originalPostCreated: originalPost.createdAt
+        });
+
+        await newPost.save();
+
+        originalPost.shares.push({
+            sharedId: posterId,
+            shared_at: Date.now(),
+        });
+
+        // Désactiver la validation pour cette opération de sauvegarde
+        await originalPost.save({ validateModifiedOnly: true });
+
+        console.log("my post shared", originalPost.shares);
+        console.log("my post shared", originalPost);
+
+        res.status(201).json({ message: 'Post shared as new post successfully', newPost });
+    } catch (error) {
+        console.error('Error sharing post as new post:', error);
+        res.status(500).json({ message: 'Error sharing post as new post', error: error.message || error });
+    }
+};
+
+
+
 
 
 module.exports.updatePost = (req, res) => {

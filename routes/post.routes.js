@@ -10,6 +10,8 @@ router.get('/', postController.readPost);
 router.get('/:id', postController.getPostsByUser);
 router.get('/actuality-file/my-user/:userId', postController.getRecommendations);
 router.post('/', upload.array("file", 5), postController.createPost);
+router.post('/share-with-user', postController.sharePostWithUser);
+router.post('/share-as-new-post', postController.sharePostAsNewPost);
 router.put('/:id', postController.updatePost);
 router.post('/view/:postId', postController.handleViewPost);
 router.delete('/:id', postController.deletePost);

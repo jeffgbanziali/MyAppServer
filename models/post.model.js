@@ -6,6 +6,17 @@ const PostSchema = new mongoose.Schema(
             type: String,
             required: true
         },
+        posterId: {
+            type: String,
+            required: true
+        },
+        originalPosterId: {
+            type: String
+        },
+
+        originalMessage: {
+            type: String
+        },
         message: {
             type: String,
             trim: true,
@@ -187,7 +198,11 @@ const PostSchema = new mongoose.Schema(
                 delete: [String],
                 share: [String],
             }
-        }
+        },
+        originalPostCreated: {
+            type: Date,
+            default: Date.now,
+        },
     },
     {
         timestamps: true,
