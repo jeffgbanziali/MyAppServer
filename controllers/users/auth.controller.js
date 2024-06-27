@@ -98,11 +98,11 @@ const sendVerificationEmail = (user, verificationCode) => {
         
         </body>
         </html>`,
-        attachments: [{
-            filename: '1.png',
-            path: filePath,
-            cid: 'logoflajoo'
-        }]
+        /* attachments: [{
+             filename: '1.png',
+             path: filePath,
+             cid: 'logoflajoo'
+         }]*/
 
     };
 
