@@ -116,6 +116,7 @@ module.exports.createPost = async (req, res) => {
 };
 
 
+
 module.exports.sharePostWithUser = async (req, res) => {
     try {
         const { postId, sharedId, receiverId, conversationId, text } = req.body;
@@ -136,8 +137,8 @@ module.exports.sharePostWithUser = async (req, res) => {
 
         let message;
 
-        // Vérification et création du message en fonction du type de média
-        if (text && post.media && post.media.length > 0) {
+        // Création du message en fonction du type de média
+        if (post.media && post.media.length > 0) {
             const media = post.media[0];
             const mediaType = media.mediaType;
 
@@ -146,7 +147,7 @@ module.exports.sharePostWithUser = async (req, res) => {
                     senderId: sharedId,
                     receiverId: receiverId,
                     conversationId: conversationId,
-                    text: text,
+                    text: text || "",
                     type: "sending",
                     postId: postId,
                     attachment: {
@@ -160,7 +161,7 @@ module.exports.sharePostWithUser = async (req, res) => {
                     senderId: sharedId,
                     receiverId: receiverId,
                     conversationId: conversationId,
-                    text: text,
+                    text: text || "",
                     type: "sending",
                     postId: postId,
                     attachment: {
@@ -170,18 +171,17 @@ module.exports.sharePostWithUser = async (req, res) => {
                     isRead: false
                 });
             }
-        } else if (text) {
+        } else {
+            // Créez le message sans médias
             message = new MessageModel({
                 senderId: sharedId,
                 receiverId: receiverId,
                 conversationId: conversationId,
-                text: text,
+                text: text || "",
                 type: "sending",
                 postId: postId,
                 isRead: false
             });
-        } else {
-            return res.status(400).json({ message: 'Text is required to send a message' });
         }
 
         // Sauvegarder le message
@@ -193,6 +193,7 @@ module.exports.sharePostWithUser = async (req, res) => {
         res.status(500).json({ message: 'Error sharing post and sending message', error: error.message || error });
     }
 };
+
 
 module.exports.sharePostAsNewPost = async (req, res) => {
     try {
