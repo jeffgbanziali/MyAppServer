@@ -14,7 +14,8 @@ const MessageSchema = new mongoose.Schema({
     type: String
   },
   type: {
-    type: String
+    type: String,
+    enum: ["sending", "message",]
   },
   attachment: {
     type: {
@@ -23,7 +24,11 @@ const MessageSchema = new mongoose.Schema({
     },
     url: {
       type: String
-    }
+    },
+
+  },
+  postId: {
+    type: String
   },
   isRead: {
     type: Boolean,

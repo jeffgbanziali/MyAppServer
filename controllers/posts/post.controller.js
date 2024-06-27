@@ -1,5 +1,6 @@
 const PostModel = require('../../models/post.model');
 const UserModel = require('../../models/user.model');
+const MessageModel = require('../../models/message.model');
 const { uploadErrors } = require('../../utils/errors.utils');
 const ObjectID = require('mongoose').Types.ObjectId;
 const sizeOf = require('image-size');
@@ -8,7 +9,8 @@ const fs = require("fs");
 const { promisify } = require("util");
 const generateRecommendations = require('../../myDataModel/Data');
 
-const pipeline = promisify(require("stream").pipeline);
+
+
 
 module.exports.readPost = (req, res) => {
     PostModel.find((err, docs) => {
@@ -116,22 +118,81 @@ module.exports.createPost = async (req, res) => {
 
 module.exports.sharePostWithUser = async (req, res) => {
     try {
-        const { postId, sharedId } = req.body;
+        const { postId, sharedId, receiverId, conversationId, text } = req.body;
 
+        // Trouver le post
         const post = await PostModel.findById(postId);
         if (!post) {
             return res.status(404).json({ message: 'Post not found' });
         }
 
-        post.shares.push({ sharedId });
-        await post.save();
+        // Ajouter le partage au post
+        post.shares.push({
+            sharedId,
+            shared_at: Date.now(),
+        });
 
-        res.status(200).json({ message: 'Post shared successfully', post });
+        await post.save({ validateModifiedOnly: true });
+
+        let message;
+
+        // Vérification et création du message en fonction du type de média
+        if (text && post.media && post.media.length > 0) {
+            const media = post.media[0];
+            const mediaType = media.mediaType;
+
+            if (mediaType === "image") {
+                message = new MessageModel({
+                    senderId: sharedId,
+                    receiverId: receiverId,
+                    conversationId: conversationId,
+                    text: text,
+                    type: "sending",
+                    postId: postId,
+                    attachment: {
+                        type: "image",
+                        url: media.mediaUrl
+                    },
+                    isRead: false
+                });
+            } else if (mediaType === "video") {
+                message = new MessageModel({
+                    senderId: sharedId,
+                    receiverId: receiverId,
+                    conversationId: conversationId,
+                    text: text,
+                    type: "sending",
+                    postId: postId,
+                    attachment: {
+                        type: "video",
+                        url: media.mediaUrl
+                    },
+                    isRead: false
+                });
+            }
+        } else if (text) {
+            message = new MessageModel({
+                senderId: sharedId,
+                receiverId: receiverId,
+                conversationId: conversationId,
+                text: text,
+                type: "sending",
+                postId: postId,
+                isRead: false
+            });
+        } else {
+            return res.status(400).json({ message: 'Text is required to send a message' });
+        }
+
+        // Sauvegarder le message
+        await message.save();
+
+        res.status(200).json({ message: 'Post shared successfully and message sent', post, message });
     } catch (error) {
-        res.status(500).json({ message: 'Error sharing post', error });
+        console.error('Error sharing post and sending message:', error);
+        res.status(500).json({ message: 'Error sharing post and sending message', error: error.message || error });
     }
 };
-
 
 module.exports.sharePostAsNewPost = async (req, res) => {
     try {

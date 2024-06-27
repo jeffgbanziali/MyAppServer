@@ -13,6 +13,7 @@ module.exports.sendMessage = async (req, res) => {
       receiverId,
       conversationId,
       text,
+      type: "message",
       attachment: {
         type: "image",
         url: attachment.url,
@@ -24,6 +25,7 @@ module.exports.sendMessage = async (req, res) => {
       receiverId,
       conversationId,
       text,
+      type: "message",
       attachment: {
         type: "document",
         url: attachment.url,
@@ -34,6 +36,8 @@ module.exports.sendMessage = async (req, res) => {
       senderId,
       receiverId,
       conversationId,
+      type: "message",
+
       text,
     });
   } else if (attachment && attachment.type === "image") {
@@ -41,6 +45,7 @@ module.exports.sendMessage = async (req, res) => {
       senderId,
       receiverId,
       conversationId,
+      type: "message",
       attachment: {
         type: "image",
         url: attachment.url,
@@ -51,6 +56,7 @@ module.exports.sendMessage = async (req, res) => {
       senderId,
       receiverId,
       conversationId,
+      type: "message",
       attachment: {
         type: "document",
         url: attachment.url,
