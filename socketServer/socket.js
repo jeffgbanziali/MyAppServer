@@ -1,9 +1,15 @@
 const UserModel = require('../models/user.model');
+const mongoose = require('mongoose');
 
 module.exports = (io) => {
     let users = new Map();
 
     const addUser = async (id, socketId) => {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            console.error(`Invalid ID: ${id}`);
+            return;
+        }
+
         try {
             const user = await UserModel.findById(id);
             if (user) {
@@ -26,7 +32,13 @@ module.exports = (io) => {
             console.error('Error adding user:', error);
         }
     };
+
     const updateUserOnlineStatusInDatabase = async (userId, onlineStatus) => {
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            console.error(`Invalid ID: ${userId}`);
+            return;
+        }
+
         try {
             const user = await UserModel.findById(userId);
             if (user) {
@@ -42,11 +54,15 @@ module.exports = (io) => {
         }
     };
 
-
     const removeUser = async (socketId) => {
         try {
             for (let [id, user] of users) {
                 if (user.socketId === socketId) {
+                    if (!mongoose.Types.ObjectId.isValid(id)) {
+                        console.error(`Invalid ID: ${id}`);
+                        continue;
+                    }
+
                     const userModel = await UserModel.findById(id);
                     if (userModel) {
                         userModel.onlineStatus = false;
@@ -75,7 +91,6 @@ module.exports = (io) => {
                 io.emit("getUsers", Array.from(users.values()));
             }).catch(error => console.error('Error emitting getUsers:', error));
         });
-
 
         socket.on("onlineStatusChanged", ({ userId, onlineStatus }) => {
             updateUserOnlineStatusInDatabase(userId, onlineStatus);

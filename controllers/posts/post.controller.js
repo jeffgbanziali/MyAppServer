@@ -3,8 +3,6 @@ const UserModel = require('../../models/user.model');
 const MessageModel = require('../../models/message.model');
 const { uploadErrors } = require('../../utils/errors.utils');
 const ObjectID = require('mongoose').Types.ObjectId;
-const sizeOf = require('image-size');
-const { firestore, storage, uploadImageToFirebase } = require('../../config/firebase');
 const fs = require("fs");
 const { promisify } = require("util");
 const generateRecommendations = require('../../myDataModel/Data');
@@ -114,7 +112,6 @@ module.exports.createPost = async (req, res) => {
         res.status(500).json({ errors });
     }
 };
-
 
 
 module.exports.sharePostWithUser = async (req, res) => {
