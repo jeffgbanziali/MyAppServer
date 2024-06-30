@@ -240,8 +240,7 @@ module.exports.sharePostAsNewPost = async (req, res) => {
         // Désactiver la validation pour cette opération de sauvegarde
         await originalPost.save({ validateModifiedOnly: true });
 
-        console.log("my post shared", originalPost.shares);
-        console.log("my post shared", originalPost);
+        console.log("my post shared", newPost);
 
         res.status(201).json({ message: 'Post shared as new post successfully', newPost });
     } catch (error) {
